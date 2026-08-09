@@ -39,6 +39,14 @@
   }
 }
 
+.brand-logo {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  flex-shrink: 0;
+  object-fit: contain;
+}
+
 .brand-mark {
   width: 36px;
   height: 36px;

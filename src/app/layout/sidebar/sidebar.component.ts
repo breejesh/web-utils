@@ -5,6 +5,7 @@ import { TOOL_CATEGORIES, getToolBySlug, searchTools } from '../../core/data/too
 import { ToolDefinition } from '../../core/models/tool.model';
 import { ToastService } from '../../core/services/toast.service';
 import { UserStorageService } from '../../core/services/user-storage.service';
+import { ThemeService } from '../../core/services/theme.service';
 
 /** Max items shown in sidebar Bookmarks / Recent (keeps nav short). */
 const SIDEBAR_LIST_LIMIT = 5;
@@ -23,6 +24,7 @@ export class SidebarComponent {
 
   private readonly storage = inject(UserStorageService);
   private readonly toast = inject(ToastService);
+  readonly theme = inject(ThemeService);
 
   readonly siteName = environment.siteName;
   readonly categories = TOOL_CATEGORIES;

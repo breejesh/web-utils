@@ -1,7 +1,12 @@
 <aside class="sidebar" [class.open]="open" aria-label="Tools navigation">
   <div class="brand-block">
     <a routerLink="/" class="brand" (click)="onNav()">
-      <span class="brand-mark" aria-hidden="true">WU</span>
+      <img
+        [src]="theme.theme() === 'light' ? 'logo-light.svg' : 'logo-dark.svg'"
+        alt="Web Utils Logo"
+        class="brand-logo"
+        width="34"
+        height="34" />
       <span class="brand-text">
         <span class="brand-name">{{ siteName }}</span>
         <span class="brand-sub mono">utils.breejeshrathod.com</span>
