@@ -1,0 +1,21 @@
+<div class="shell">
+  <app-sidebar
+    [open]="sidebarOpen"
+    [query]="searchQuery"
+    (navigate)="closeSidebar()"
+  />
+
+  <div class="main-column">
+    <app-header
+      (searchChange)="onSearch($event)"
+      (menuToggle)="toggleSidebar()"
+    />
+
+    <div class="content">
+      <main class="main">
+        <router-outlet />
+      </main>
+      <app-footer />
+    </div>
+  </div>
+</div>

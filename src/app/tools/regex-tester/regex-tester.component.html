@@ -1,0 +1,191 @@
+<app-tool-layout [tool]="tool">
+  <div class="rx-topbar">
+    <div class="flavor chip chip-accent mono">{{ flavorLabel }}</div>
+    <div class="tabs" role="tablist">
+      <button type="button" class="tab" role="tab" [class.on]="tab === 'match'" (click)="setTab('match')">Match</button>
+      <button type="button" class="tab" role="tab" [class.on]="tab === 'substitution'" (click)="setTab('substitution')">
+        Substitution
+      </button>
+    </div>
+    <div class="top-actions">
+      <button type="button" class="btn btn-ghost btn-sm" (click)="sample()">Sample</button>
+      <button type="button" class="btn btn-ghost btn-sm" (click)="copyPattern()">Copy regex</button>
+      <button type="button" class="btn btn-ghost btn-sm" (click)="copyMatches()" [disabled]="!matches.length">Export matches</button>
+      <button type="button" class="btn btn-danger btn-sm" (click)="clearAll()">Clear</button>
+    </div>
+  </div>
+
+  <!-- Regular expression bar (regex101-style) -->
+  <div class="pattern-bar surface">
+    <span class="slash mono" aria-hidden="true">{{ delimiter }}</span>
+    <input
+      class="pattern-input mono"
+      type="text"
+      [(ngModel)]="pattern"
+      [appToolHistory]="tool.slug"
+      historyField="pattern"
+      (ngModelChange)="run()"
+      placeholder="regular expression"
+      spellcheck="false"
+      autocomplete="off"
+      aria-label="Regular expression"
+    />
+    <span class="slash mono" aria-hidden="true">{{ delimiter }}</span>
+    <div class="flag-pills" role="group" aria-label="Flags">
+      <button type="button" class="flag" [class.on]="flagG" (click)="toggleFlag('g')" title="Global">g</button>
+      <button type="button" class="flag" [class.on]="flagI" (click)="toggleFlag('i')" title="Case insensitive">i</button>
+      <button type="button" class="flag" [class.on]="flagM" (click)="toggleFlag('m')" title="Multiline">m</button>
+      <button type="button" class="flag" [class.on]="flagS" (click)="toggleFlag('s')" title="Dotall (single line)">s</button>
+      <button type="button" class="flag" [class.on]="flagU" (click)="toggleFlag('u')" title="Unicode">u</button>
+      <button type="button" class="flag" [class.on]="flagY" (click)="toggleFlag('y')" title="Sticky">y</button>
+    </div>
+  </div>
+
+  @if (error) {
+    <div class="error-box">{{ error }}</div>
+  }
+
+  <div class="rx-layout" [class.with-ref]="showRef">
+    <div class="rx-main">
+      <!-- Test string + highlight -->
+      <div class="workspace-fill cols-1 test-workspace">
+        <div class="panel surface workspace-pane">
+          <div class="panel-head">
+            <h3 class="panel-title">Test string</h3>
+            <span class="meta-row">{{ matches.length }} match{{ matches.length === 1 ? '' : 'es' }}</span>
+          </div>
+          <textarea
+            class="textarea fill test-input"
+            [(ngModel)]="text"
+            [appToolHistory]="tool.slug"
+            historyField="text"
+            (ngModelChange)="run()"
+            placeholder="Paste or type text to test against the expression…"
+            spellcheck="false"
+          ></textarea>
+        </div>
+      </div>
+
+      <div class="panel surface highlight-panel">
+        <div class="panel-head">
+          <h3 class="panel-title">Match highlight</h3>
+        </div>
+        <div class="scroll-pane highlight-view mono" [innerHTML]="highlighted" aria-live="polite"></div>
+      </div>
+
+      @if (tab === 'substitution') {
+        <div class="sub-row">
+          <div class="panel surface">
+            <div class="panel-head"><h3 class="panel-title">Substitution</h3></div>
+            <input
+              class="input mono"
+              [(ngModel)]="replaceWith"
+              (ngModelChange)="run()"
+              placeholder="$1 or $<name> or $&"
+              spellcheck="false"
+            />
+          </div>
+          <div class="panel surface">
+            <div class="panel-head">
+              <h3 class="panel-title">Result</h3>
+              <button type="button" class="btn btn-ghost btn-sm" (click)="clip.copy(substitutionOut)" [disabled]="!substitutionOut">
+                Copy
+              </button>
+            </div>
+            <pre class="sub-out mono scroll-pane">{{ substitutionOut || '—' }}</pre>
+          </div>
+        </div>
+      }
+
+      <!-- Match information -->
+      <div class="panel surface match-info">
+        <div class="panel-head">
+          <h3 class="panel-title">Match information</h3>
+        </div>
+        @if (!pattern) {
+          <p class="empty">Enter a regular expression to see match details.</p>
+        } @else if (error) {
+          <p class="empty">Fix the expression error above.</p>
+        } @else if (!matches.length) {
+          <p class="empty">Your regular expression does not match the test string.</p>
+        } @else {
+          <div class="match-cards">
+            @for (m of matches; track m.n) {
+              <button
+                type="button"
+                class="match-card"
+                [class.on]="selectedMatch === m.n"
+                (click)="selectMatch(m.n)"
+              >
+                <div class="match-card-top mono">
+                  <span class="mn" [style.color]="matchColor(m.n)">Match {{ m.n }}</span>
+                  <span class="range">{{ m.index }}–{{ m.end }} · {{ m.match.length }} chars</span>
+                </div>
+                <div class="match-val mono">{{ m.match }}</div>
+                @if (m.groups.length) {
+                  <div class="group-table mono">
+                    @for (g of m.groups; track g.num + (g.name || '')) {
+                      <div class="g-row">
+                        <span class="g-key">Group {{ g.num }}@if (g.name) { · {{ g.name }} }</span>
+                        <span class="g-val">{{ g.value === '' ? '(empty)' : g.value }}</span>
+                      </div>
+                    }
+                  </div>
+                }
+              </button>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Explanation -->
+      <div class="panel surface">
+        <div class="panel-head"><h3 class="panel-title">Explanation</h3></div>
+        @if (!explanation.length) {
+          <p class="empty">An explanation of your regex will appear as you type.</p>
+        } @else {
+          <ul class="explain mono">
+            @for (line of explanation; track $index) {
+              <li>
+                <code class="tok">{{ line.token }}</code>
+                <span class="mean">{{ line.meaning }}</span>
+              </li>
+            }
+          </ul>
+        }
+      </div>
+    </div>
+
+    <!-- Quick reference (regex101 right rail) -->
+    <aside class="rx-ref surface" [class.collapsed]="!showRef">
+      <div class="ref-head">
+        <h3 class="panel-title">Quick reference</h3>
+        <button type="button" class="btn btn-ghost btn-sm" (click)="showRef = !showRef">
+          {{ showRef ? 'Hide' : 'Show' }}
+        </button>
+      </div>
+      @if (showRef) {
+        <input
+          class="input ref-search"
+          type="search"
+          [(ngModel)]="refFilter"
+          placeholder="Search reference…"
+          aria-label="Search quick reference"
+        />
+        <div class="ref-list scroll-pane">
+          @for (cat of refCats; track cat) {
+            @if (hasRefCat(cat)) {
+              <div class="ref-cat mono">{{ cat }}</div>
+              @for (item of refItemsFor(cat); track item.token + item.desc) {
+                <button type="button" class="ref-item" (click)="insertToken(item.token)" title="Insert into pattern">
+                  <code class="tok">{{ item.token }}</code>
+                  <span class="desc">{{ item.desc }}</span>
+                </button>
+              }
+            }
+          }
+        </div>
+      }
+    </aside>
+  </div>
+</app-tool-layout>

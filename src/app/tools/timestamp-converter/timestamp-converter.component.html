@@ -1,0 +1,169 @@
+<app-tool-layout [tool]="tool">
+  <!-- Live epoch clock -->
+  <div class="stat-grid">
+    <div class="stat live">
+      <span class="k">Unix epoch (seconds)</span>
+      <span class="v mono click" (click)="clip.copy(liveSec)" title="Click to copy">{{ liveSec }}</span>
+    </div>
+    <div class="stat">
+      <span class="k">Milliseconds</span>
+      <span class="v mono sm click" (click)="clip.copy(liveMs)">{{ liveMs }}</span>
+    </div>
+    <div class="stat">
+      <span class="k">Microseconds</span>
+      <span class="v mono sm click" (click)="clip.copy(liveUs)">{{ liveUs }}</span>
+    </div>
+    <div class="stat">
+      <span class="k">Nanoseconds</span>
+      <span class="v mono sm click" (click)="clip.copy(liveNs)">{{ liveNs }}</span>
+    </div>
+  </div>
+  <p class="clock-line mono">UTC {{ liveIso }} · Local {{ liveLocal }}</p>
+
+  <div class="toolbar">
+    <button type="button" class="btn btn-ghost btn-sm" (click)="clearAll()">Clear all forms</button>
+    <button type="button" class="btn btn-ghost btn-sm" (click)="useNowTs()">Use current epoch</button>
+  </div>
+
+  <!-- Timestamp → human -->
+  <section class="panel surface">
+    <div class="panel-head">
+      <h3 class="panel-title">Timestamp → human-readable date</h3>
+      <button type="button" class="btn btn-ghost btn-sm" (click)="clip.copy(fromResultLines.join('\n'))" [disabled]="!fromResultLines.length">Copy result</button>
+    </div>
+    <p class="hint">Supports seconds (10 digits), milliseconds (13), microseconds (16), and nanoseconds (19). Auto-detect by default.</p>
+    <div class="row">
+      <label class="field grow">
+        <span class="field-label">Unix timestamp</span>
+        <input class="input mono" [(ngModel)]="tsInput" [appToolHistory]="tool.slug" historyField="timestamp" (ngModelChange)="fromTimestamp()" placeholder="1710000000" />
+      </label>
+      <label class="field" style="max-width:160px">
+        <span class="field-label">Unit</span>
+        <select class="select" [(ngModel)]="tsUnit" (ngModelChange)="fromTimestamp()">
+          <option value="auto">Auto-detect</option>
+          <option value="s">Seconds</option>
+          <option value="ms">Milliseconds</option>
+          <option value="us">Microseconds</option>
+          <option value="ns">Nanoseconds</option>
+        </select>
+      </label>
+    </div>
+    @if (tsError) { <div class="error-box">{{ tsError }}</div> }
+    @if (fromResultLines.length) {
+      <pre class="result mono">@for (line of fromResultLines; track $index) {{{ line }}&#10;}</pre>
+    }
+  </section>
+
+  <!-- Date parts → timestamp -->
+  <section class="panel surface">
+    <div class="panel-head">
+      <h3 class="panel-title">Date / time parts → timestamp</h3>
+    </div>
+    <div class="parts">
+      <label class="field"><span class="field-label">Year</span><input class="input" type="number" [(ngModel)]="yr" (ngModelChange)="fromParts()" /></label>
+      <label class="field"><span class="field-label">Mon</span><input class="input" type="number" min="1" max="12" [(ngModel)]="mon" (ngModelChange)="fromParts()" /></label>
+      <label class="field"><span class="field-label">Day</span><input class="input" type="number" min="1" max="31" [(ngModel)]="day" (ngModelChange)="fromParts()" /></label>
+      <label class="field"><span class="field-label">Hour</span><input class="input" type="number" min="0" max="23" [(ngModel)]="hr" (ngModelChange)="fromParts()" /></label>
+      <label class="field"><span class="field-label">Min</span><input class="input" type="number" min="0" max="59" [(ngModel)]="min" (ngModelChange)="fromParts()" /></label>
+      <label class="field"><span class="field-label">Sec</span><input class="input" type="number" min="0" max="59" [(ngModel)]="sec" (ngModelChange)="fromParts()" /></label>
+    </div>
+    <div class="options tight">
+      <label class="check"><input type="radio" name="pzone" [value]="true" [(ngModel)]="partsUtc" (ngModelChange)="fromParts()" /> UTC</label>
+      <label class="check"><input type="radio" name="pzone" [value]="false" [(ngModel)]="partsUtc" (ngModelChange)="fromParts()" /> Local time</label>
+      <label class="check"><input type="radio" name="clock" value="24" [(ngModel)]="clockFmt" (ngModelChange)="fromParts()" /> 24-hour</label>
+      <label class="check"><input type="radio" name="clock" value="12" [(ngModel)]="clockFmt" (ngModelChange)="fromParts()" /> 12-hour</label>
+      @if (clockFmt === '12') {
+        <label class="check"><input type="radio" name="ampm" value="AM" [(ngModel)]="ampm" (ngModelChange)="fromParts()" /> AM</label>
+        <label class="check"><input type="radio" name="ampm" value="PM" [(ngModel)]="ampm" (ngModelChange)="fromParts()" /> PM</label>
+      }
+    </div>
+    <pre class="result mono">{{ partsResult || '—' }}</pre>
+  </section>
+
+  <!-- Free-form date string -->
+  <section class="panel surface">
+    <div class="panel-head">
+      <h3 class="panel-title">Date string → timestamp</h3>
+      <button type="button" class="btn btn-ghost btn-sm" (click)="clip.copy(dateResultLines.join('\n'))" [disabled]="!dateResultLines.length">Copy</button>
+    </div>
+    <p class="hint">Input formats: RFC 2822, ISO 8601, D-M-Y, M/D/Y, Y-M-D, and browser-local parsing.</p>
+    <label class="field">
+      <span class="field-label">Date / time string</span>
+      <input class="input mono" [(ngModel)]="dateInput" (ngModelChange)="fromDateString()" placeholder="2026-01-01T00:00:00Z" />
+    </label>
+    @if (dateError) { <div class="error-box">{{ dateError }}</div> }
+    @if (dateResultLines.length) {
+      <pre class="result mono">@for (line of dateResultLines; track $index) {{{ line }}&#10;}</pre>
+    }
+  </section>
+
+  <!-- Start/end of period -->
+  <section class="panel surface">
+    <div class="panel-head"><h3 class="panel-title">Epoch for start &amp; end of year / month / day</h3></div>
+    <div class="options tight">
+      <label class="check"><input type="radio" name="pmode" value="year" [(ngModel)]="periodMode" (ngModelChange)="calcPeriod()" /> Year</label>
+      <label class="check"><input type="radio" name="pmode" value="month" [(ngModel)]="periodMode" (ngModelChange)="calcPeriod()" /> Month</label>
+      <label class="check"><input type="radio" name="pmode" value="day" [(ngModel)]="periodMode" (ngModelChange)="calcPeriod()" /> Day</label>
+      <label class="check"><input type="radio" name="puz" [value]="true" [(ngModel)]="periodUtc" (ngModelChange)="calcPeriod()" /> UTC</label>
+      <label class="check"><input type="radio" name="puz" [value]="false" [(ngModel)]="periodUtc" (ngModelChange)="calcPeriod()" /> Local</label>
+    </div>
+    <div class="parts">
+      <label class="field"><span class="field-label">Year</span><input class="input" type="number" [(ngModel)]="pYr" (ngModelChange)="calcPeriod()" /></label>
+      @if (periodMode !== 'year') {
+        <label class="field"><span class="field-label">Mon</span><input class="input" type="number" min="1" max="12" [(ngModel)]="pMon" (ngModelChange)="calcPeriod()" /></label>
+      }
+      @if (periodMode === 'day') {
+        <label class="field"><span class="field-label">Day</span><input class="input" type="number" min="1" max="31" [(ngModel)]="pDay" (ngModelChange)="calcPeriod()" /></label>
+      }
+    </div>
+    <pre class="result mono">{{ periodResult || '—' }}</pre>
+  </section>
+
+  <!-- Seconds → human duration -->
+  <section class="panel surface">
+    <div class="panel-head"><h3 class="panel-title">Convert seconds → years, months, days, hours, minutes</h3></div>
+    <label class="field" style="max-width:240px">
+      <span class="field-label">Seconds</span>
+      <input class="input mono" type="number" [(ngModel)]="humanSeconds" (ngModelChange)="humanize()" />
+    </label>
+    <pre class="result mono">{{ humanResult }}</pre>
+  </section>
+
+  <!-- Reference table -->
+  <section class="panel surface">
+    <div class="panel-head"><h3 class="panel-title">What is the Unix epoch?</h3></div>
+    <p class="hint">
+      The Unix epoch is the number of seconds since 1970-01-01T00:00:00Z (not counting leap seconds).
+      Signed 32-bit systems overflow on 2038-01-19 (the Year 2038 problem).
+    </p>
+    <table class="ref">
+      <thead><tr><th>Human-readable</th><th>Seconds</th></tr></thead>
+      <tbody>
+        @for (r of refTable; track r.label) {
+          <tr>
+            <td>{{ r.label }}</td>
+            <td class="mono">{{ r.sec.toLocaleString() }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Code examples -->
+  <section class="panel surface">
+    <div class="panel-head"><h3 class="panel-title">Code examples (current epoch substituted)</h3></div>
+    <div class="code-grid">
+      @for (s of snippets; track s.lang) {
+        <div class="code-card">
+          <div class="lang mono">{{ s.lang }}</div>
+          <div class="line"><span class="tag">now</span> <code>{{ s.now }}</code>
+            <button type="button" class="btn btn-ghost btn-sm" (click)="clip.copy(s.now)">Copy</button>
+          </div>
+          <div class="line"><span class="tag">from</span> <code>{{ snippet(s.from) }}</code>
+            <button type="button" class="btn btn-ghost btn-sm" (click)="clip.copy(snippet(s.from))">Copy</button>
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+</app-tool-layout>

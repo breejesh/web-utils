@@ -1,0 +1,95 @@
+<app-tool-layout [tool]="tool">
+  <div class="options surface">
+    <label class="field" style="max-width:150px">
+      <span class="field-label">Indent</span>
+      <select class="select" [(ngModel)]="indent" (ngModelChange)="format()">
+        <option [ngValue]="2">2 spaces</option>
+        <option [ngValue]="3">3 spaces</option>
+        <option [ngValue]="4">4 spaces</option>
+        <option [ngValue]="0">Minified default</option>
+      </select>
+    </label>
+    <label class="check"><input type="checkbox" [(ngModel)]="sortKeys" (ngModelChange)="format()" /> Sort keys</label>
+    <label class="check"><input type="checkbox" [(ngModel)]="autoUpdate" /> Auto-update</label>
+    <label class="check"><input type="radio" name="view" value="text" [(ngModel)]="view" /> Text</label>
+    <label class="check"><input type="radio" name="view" value="tree" [(ngModel)]="view" /> Tree view</label>
+  </div>
+
+  <div class="toolbar">
+    <button type="button" class="btn btn-primary" (click)="format()">Format / Beautify</button>
+    <button type="button" class="btn btn-primary" (click)="minify()">Minify</button>
+    <button type="button" class="btn btn-ghost" (click)="validateOnly()">Validate (JSON Lint)</button>
+    <button type="button" class="btn btn-ghost" (click)="fixJson()" title="Fix trailing commas, unquoted keys, single quotes">Auto-fix</button>
+    <label class="btn btn-ghost file-btn">Upload<input type="file" accept=".json,application/json,text/plain" hidden (change)="loadFile($event)" /></label>
+    <button type="button" class="btn btn-ghost" (click)="download()" [disabled]="!output">Download</button>
+    <button type="button" class="btn btn-ghost" (click)="printJson()" [disabled]="!output && !input">Print</button>
+    <button type="button" class="btn btn-ghost" (click)="sample()">Sample</button>
+    <button type="button" class="btn btn-danger" (click)="clear()">Clear</button>
+  </div>
+
+  @if (error) {
+    <div class="error-box">
+      {{ error }}
+      @if (errorLine) { <span> · near line {{ errorLine }}</span> }
+    </div>
+  }
+  @if (ok) {
+    <div class="meta-row">
+      <span class="chip chip-accent">Valid JSON</span>
+      <span class="chip">{{ stats.objects }} objects</span>
+      <span class="chip">{{ stats.arrays }} arrays</span>
+      <span class="chip">{{ stats.keys }} keys</span>
+      <span class="chip">{{ stats.size }} bytes</span>
+      <span class="chip">Saved locally</span>
+    </div>
+  }
+
+  <div class="workspace-fill grid-2">
+    <div class="panel surface workspace-pane">
+      <div class="panel-head">
+        <h3 class="panel-title">Input</h3>
+        <button type="button" class="btn btn-ghost btn-sm" (click)="clip.copy(input)">Copy</button>
+      </div>
+      <textarea
+        class="textarea fill"
+        [(ngModel)]="input"
+        [appToolHistory]="tool.slug"
+        placeholder='{"hello":"world"}'
+        (ngModelChange)="onInputChange()"
+        spellcheck="false"
+      ></textarea>
+    </div>
+    <div class="panel surface workspace-pane">
+      <div class="panel-head">
+        <h3 class="panel-title">{{ view === 'tree' ? 'Tree viewer' : 'Formatted output' }}</h3>
+        <button type="button" class="btn btn-ghost btn-sm" (click)="clip.copy(output)" [disabled]="!output">Copy</button>
+      </div>
+      @if (view === 'text') {
+        <textarea class="textarea fill" [(ngModel)]="output" placeholder="Formatted JSON…" spellcheck="false"></textarea>
+      } @else {
+        <div class="tree mono scroll-pane" role="tree">
+          @if (!tree.length) {
+            <p class="empty">Format valid JSON to explore the tree.</p>
+          }
+          <ng-container *ngTemplateOutlet="nodesTpl; context: { $implicit: tree, depth: 0 }" />
+        </div>
+      }
+    </div>
+  </div>
+</app-tool-layout>
+
+<ng-template #nodesTpl let-nodes let-depth="depth">
+  @for (n of nodes; track n.path) {
+    <div class="tnode" [style.paddingLeft.px]="depth * 14" role="treeitem">
+      <button type="button" class="twisty" (click)="toggle(n)" [disabled]="n.isLeaf">
+        @if (!n.isLeaf) { {{ n.expanded ? '▼' : '▶' }} } @else { · }
+      </button>
+      <span class="tkey">{{ n.key }}</span>
+      <span class="ttype">{{ n.type }}</span>
+      <span class="tval">{{ n.valuePreview }}</span>
+    </div>
+    @if (!n.isLeaf && n.expanded && n.children?.length) {
+      <ng-container *ngTemplateOutlet="nodesTpl; context: { $implicit: n.children, depth: depth + 1 }" />
+    }
+  }
+</ng-template>

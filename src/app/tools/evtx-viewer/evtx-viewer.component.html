@@ -1,0 +1,123 @@
+<app-tool-layout [tool]="tool">
+  <div class="options surface">
+    <label class="field" style="max-width:140px">
+      <span class="field-label">Max events</span>
+      <input class="input" type="number" min="100" max="20000" step="100" [(ngModel)]="maxEvents" />
+    </label>
+    <label class="field grow">
+      <span class="field-label">Filter text</span>
+      <input class="input" type="search" [(ngModel)]="filter" placeholder="Provider, computer, message…" />
+    </label>
+    <label class="field" style="max-width:120px">
+      <span class="field-label">Event ID</span>
+      <input class="input mono" [(ngModel)]="eventIdFilter" placeholder="4624" />
+    </label>
+  </div>
+
+  <div class="toolbar">
+    <label class="btn btn-primary file-btn">
+      Open .evtx file
+      <input type="file" accept=".evtx,application/octet-stream" hidden (change)="onFile($event)" />
+    </label>
+    <button type="button" class="btn btn-ghost" (click)="exportJson()" [disabled]="!result?.events?.length">Export JSON</button>
+    <button type="button" class="btn btn-ghost" (click)="exportCsv()" [disabled]="!result?.events?.length">Export CSV</button>
+    <button type="button" class="btn btn-danger" (click)="clear()">Clear</button>
+  </div>
+
+  @if (loading) {
+    <p class="mono status">Parsing in your browser…</p>
+  }
+  @if (error) {
+    <div class="error-box">{{ error }}</div>
+  }
+
+  @if (result) {
+    <div class="meta-row">
+      <span class="chip chip-accent">{{ fileName }}</span>
+      <span class="chip">{{ result.events.length }} events</span>
+      <span class="chip">{{ filtered.length }} shown</span>
+      <span class="chip">{{ result.chunkCount }} chunks</span>
+      <span class="chip">v{{ result.majorVersion }}.{{ result.minorVersion }}</span>
+      @if (result.dirty) {
+        <span class="chip">Dirty flag</span>
+      }
+      <span class="chip">{{ (result.fileSize / 1024).toFixed(1) }} KB</span>
+    </div>
+    @for (w of result.warnings; track w) {
+      <p class="warn mono">{{ w }}</p>
+    }
+
+    <div class="layout">
+      <div class="panel surface table-wrap">
+        <div class="panel-head"><h3 class="panel-title">Events</h3></div>
+        <table class="evt-table">
+          <thead>
+            <tr>
+              <th>Time (UTC)</th>
+              <th>ID</th>
+              <th>Level</th>
+              <th>Provider</th>
+              <th>Channel</th>
+              <th>Preview</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (e of filtered; track e.recordId + e.timestampIso) {
+              <tr [class.active]="selected === e" (click)="select(e)">
+                <td class="mono">{{ e.timestampIso || '—' }}</td>
+                <td class="mono">{{ e.eventId || '—' }}</td>
+                <td>{{ e.level || '—' }}</td>
+                <td>{{ e.provider || '—' }}</td>
+                <td>{{ e.channel || '—' }}</td>
+                <td class="preview">{{ e.messagePreview || '—' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+        @if (!filtered.length) {
+          <p class="empty">No events match your filter.</p>
+        }
+      </div>
+
+      <div class="panel surface detail">
+        <div class="panel-head">
+          <h3 class="panel-title">Event detail</h3>
+          @if (selected) {
+            <button type="button" class="btn btn-ghost btn-sm" (click)="clip.copy(selected.rawStrings.join('\n'))">Copy strings</button>
+          }
+        </div>
+        @if (!selected) {
+          <p class="empty">Select a row to inspect recovered strings and metadata.</p>
+        } @else {
+          <dl class="kv mono">
+            <div><dt>Record ID</dt><dd>{{ selected.recordId }}</dd></div>
+            <div><dt>Timestamp</dt><dd>{{ selected.timestampIso || '—' }}</dd></div>
+            <div><dt>Event ID</dt><dd>{{ selected.eventId || '—' }}</dd></div>
+            <div><dt>Level</dt><dd>{{ selected.level || '—' }}</dd></div>
+            <div><dt>Provider</dt><dd>{{ selected.provider || '—' }}</dd></div>
+            <div><dt>Channel</dt><dd>{{ selected.channel || '—' }}</dd></div>
+            <div><dt>Computer</dt><dd>{{ selected.computer || '—' }}</dd></div>
+            <div><dt>Size</dt><dd>{{ selected.size }} bytes</dd></div>
+          </dl>
+          <h4 class="sub">Recovered strings</h4>
+          <ul class="strings mono">
+            @for (s of selected.rawStrings; track $index) {
+              <li>{{ s }}</li>
+            }
+          </ul>
+          <h4 class="sub">Hex preview</h4>
+          <pre class="hex mono">{{ selected.hexPreview }}</pre>
+        }
+      </div>
+    </div>
+  } @else if (!loading) {
+    <div class="panel surface drop">
+      <p><strong>Drop a Windows Event Log (.evtx)</strong> — Security, System, Application, etc.</p>
+      <p class="hint">
+        Parsing runs entirely in your browser. For large logs, lower “Max events” for speed.
+        Binary XML fields are recovered best-effort (strings + metadata); full template rendering
+        matches Microsoft’s viewer only for common string-rich events.
+      </p>
+    </div>
+  }
+</app-tool-layout>

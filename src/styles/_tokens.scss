@@ -1,0 +1,67 @@
+/* Web Utils — design tokens (aligned with breejesh-portfolio) */
+
+:root {
+  color-scheme: dark;
+
+  --bg-primary: #050505;
+  --bg-secondary: #0a0a0a;
+  --bg-elevated: #111111;
+  --bg-input: #0c0c0c;
+  --text-primary: #f4f4f5;
+  --text-secondary: #a1a1aa;
+  --text-muted: #71717a;
+  --border-color: #1c1c1c;
+  --border-strong: #2a2a2a;
+  --accent-color: #64ffda;
+  --accent-color-hover: #52e0c0;
+  --accent-opacity: rgba(100, 255, 218, 0.08);
+  --accent-glow: rgba(100, 255, 218, 0.18);
+  --danger: #fb7185;
+  --danger-opacity: rgba(251, 113, 133, 0.12);
+  --warning: #fbbf24;
+  --success: #64ffda;
+  --header-bg: rgba(5, 5, 5, 0.82);
+  --header-shadow: rgba(0, 0, 0, 0.55);
+  --sidebar-width: 268px;
+  --header-height: 58px;
+  --workspace-height: clamp(320px, calc(100dvh - var(--header-height) - 240px), 920px);
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.35);
+  --focus-ring: 0 0 0 2px var(--bg-primary), 0 0 0 4px var(--accent-color);
+  --font-sans: Calibre, "Segoe UI", San Francisco, SF Pro Text, -apple-system, system-ui,
+    BlinkMacSystemFont, Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "SF Mono", "Fira Code", "Fira Mono", "Roboto Mono", ui-monospace, "Lucida Console",
+    Monaco, monospace;
+  --ease: cubic-bezier(0.645, 0.045, 0.355, 1);
+  --transition: 0.22s var(--ease);
+}
+
+html.light-theme,
+body.light-theme {
+  color-scheme: light;
+
+  --bg-primary: #f4f6fb;
+  --bg-secondary: #f7f7f7;
+  --bg-elevated: #ffffff;
+  --bg-input: #ffffff;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --border-color: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --accent-color: #0d9488;
+  --accent-color-hover: #0f766e;
+  --accent-opacity: rgba(13, 148, 136, 0.1);
+  --accent-glow: rgba(13, 148, 136, 0.16);
+  --danger: #e11d48;
+  --danger-opacity: rgba(225, 29, 72, 0.1);
+  --warning: #d97706;
+  --success: #0d9488;
+  --header-bg: rgba(244, 246, 251, 0.88);
+  --header-shadow: rgba(15, 23, 42, 0.06);
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 10px 30px rgba(15, 23, 42, 0.08);
+}

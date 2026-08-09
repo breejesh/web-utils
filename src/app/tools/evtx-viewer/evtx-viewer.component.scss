@@ -1,0 +1,153 @@
+.file-btn {
+  cursor: pointer;
+}
+
+.grow {
+  flex: 1;
+  min-width: 160px;
+}
+
+.status {
+  color: var(--accent-color);
+}
+
+.warn {
+  margin: 0.25rem 0;
+  font-size: 12px;
+  color: var(--warning);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 1rem;
+  align-items: start;
+}
+
+.table-wrap {
+  overflow: auto;
+  max-height: min(60dvh, 640px);
+  min-height: 0;
+}
+
+.evt-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+
+  th,
+  td {
+    text-align: left;
+    padding: 0.45rem 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: top;
+  }
+
+  th {
+    position: sticky;
+    top: 0;
+    background: var(--bg-elevated);
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    z-index: 1;
+  }
+
+  tbody tr {
+    cursor: pointer;
+  }
+
+  tbody tr:hover,
+  tbody tr.active {
+    background: var(--accent-opacity);
+  }
+
+  .preview {
+    max-width: 220px;
+    color: var(--text-secondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.detail {
+  min-height: 320px;
+}
+
+.kv {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 12.5px;
+
+  div {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 0.5rem;
+  }
+
+  dt {
+    color: var(--text-muted);
+    margin: 0;
+  }
+
+  dd {
+    margin: 0;
+    color: var(--text-primary);
+    word-break: break-word;
+  }
+}
+
+.sub {
+  margin: 1rem 0 0.4rem;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+.strings {
+  margin: 0;
+  padding-left: 1.1rem;
+  max-height: 200px;
+  overflow: auto;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.hex {
+  margin: 0;
+  padding: 0.65rem 0.75rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: 11px;
+  white-space: pre-wrap;
+  word-break: break-all;
+  color: var(--text-muted);
+}
+
+.empty {
+  color: var(--text-muted);
+  margin: 0.75rem 0 0;
+}
+
+.drop {
+  text-align: center;
+  padding: 2rem 1.25rem;
+}
+
+.hint {
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  max-width: 52ch;
+  margin: 0.75rem auto 0;
+  line-height: 1.5;
+}
+
+@media (max-width: 960px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}

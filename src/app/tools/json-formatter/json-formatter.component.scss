@@ -1,0 +1,61 @@
+.file-btn {
+  cursor: pointer;
+}
+
+.tree {
+  min-height: 0;
+  padding: 0.5rem 0.35rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+
+.tnode {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 0.5rem;
+  padding: 0.12rem 0.25rem;
+  border-radius: 4px;
+}
+
+.tnode:hover {
+  background: var(--accent-opacity);
+}
+
+.twisty {
+  border: 0;
+  background: transparent;
+  color: var(--text-muted);
+  width: 1.1rem;
+  cursor: pointer;
+  font-size: 10px;
+  padding: 0;
+}
+
+.twisty:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+.tkey {
+  color: var(--accent-color);
+}
+
+.ttype {
+  color: var(--text-muted);
+  font-size: 10px;
+  text-transform: uppercase;
+}
+
+.tval {
+  color: var(--text-secondary);
+  word-break: break-all;
+}
+
+.empty {
+  color: var(--text-muted);
+  margin: 0.75rem;
+}

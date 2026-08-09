@@ -1,0 +1,107 @@
+<section class="hero">
+  <p class="eyebrow mono">Privacy-first utilities</p>
+  <h1>
+    Everyday tools that
+    <span class="accent">never leave your browser</span>
+  </h1>
+  <p class="lead">
+    {{ siteName }} is a polished suite of client-side utilities — encode, format, convert, generate —
+    with the same visual language as the Breejesh portfolio. Each tool has its own URL for search and bookmarks.
+  </p>
+  <div class="hero-meta">
+    <span class="chip chip-accent">{{ allTools.length }} tools</span>
+    <span class="chip">SSR + prerender</span>
+    <span class="chip">Light & dark</span>
+    <span class="chip">No backend for your data</span>
+  </div>
+  <p class="privacy mono">{{ privacy }} Bookmarks and paste history stay in this browser.</p>
+</section>
+
+@if (bookmarkedTools().length) {
+<section class="block">
+  <div class="block-head">
+    <h2 class="section-title">Your bookmarks</h2>
+  </div>
+  <div class="pill-row">
+    @for (tool of bookmarkedTools(); track tool.slug) {
+    <a class="pill accent-pill" [routerLink]="['/tools', tool.slug]">★ {{ tool.shortName }}</a>
+    }
+  </div>
+</section>
+}
+
+@if (recentTools().length) {
+<section class="block">
+  <div class="block-head">
+    <h2 class="section-title">Recently used</h2>
+  </div>
+  <div class="pill-row">
+    @for (tool of recentTools(); track tool.slug) {
+    <a class="pill" [routerLink]="['/tools', tool.slug]">{{ tool.shortName }}</a>
+    }
+  </div>
+</section>
+}
+
+<section class="block">
+  <div class="block-head">
+    <h2 class="section-title">Featured</h2>
+  </div>
+  <div class="card-grid">
+    @for (tool of featured; track tool.slug) {
+    <a class="tool-card surface" [routerLink]="['/tools', tool.slug]">
+      <span class="idx mono">{{ tool.icon }}</span>
+      <h3>{{ tool.name }}</h3>
+      <p>{{ tool.description }}</p>
+      <span class="open mono">Open tool →</span>
+    </a>
+    }
+  </div>
+</section>
+
+<section class="block">
+  <div class="block-head">
+    <h2 class="section-title">Popular</h2>
+  </div>
+  <div class="pill-row">
+    @for (tool of popular; track tool.slug) {
+    <a class="pill" [routerLink]="['/tools', tool.slug]">{{ tool.shortName }}</a>
+    }
+  </div>
+</section>
+
+<section class="block">
+  <div class="block-head search-head">
+    <h2 class="section-title">All tools</h2>
+    <label class="field home-search">
+      <span class="visually-hidden">Filter tools</span>
+      <input class="input" type="search" placeholder="Filter by name or keyword…" [(ngModel)]="query" />
+    </label>
+  </div>
+
+  @for (cat of categories; track cat.id) {
+  @if (toolsIn(cat.id).length) {
+  <div class="category">
+    <div class="cat-head">
+      <h3>{{ cat.name }}</h3>
+      <p>{{ cat.description }}</p>
+    </div>
+    <div class="card-grid dense">
+      @for (tool of toolsIn(cat.id); track tool.slug) {
+      <a class="tool-card surface compact" [routerLink]="['/tools', tool.slug]">
+        <div class="row">
+          <span class="idx mono">{{ tool.icon }}</span>
+          <h3>{{ tool.shortName }}</h3>
+        </div>
+        <p>{{ tool.description }}</p>
+      </a>
+      }
+    </div>
+  </div>
+  }
+  }
+
+  @if (!tools.length) {
+  <p class="empty">No tools match your filter.</p>
+  }
+</section>

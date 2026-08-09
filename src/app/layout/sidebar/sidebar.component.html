@@ -1,0 +1,81 @@
+<aside class="sidebar" [class.open]="open" aria-label="Tools navigation">
+  <div class="brand-block">
+    <a routerLink="/" class="brand" (click)="onNav()">
+      <span class="brand-mark" aria-hidden="true">WU</span>
+      <span class="brand-text">
+        <span class="brand-name">{{ siteName }}</span>
+        <span class="brand-sub mono">utils.breejeshrathod.com</span>
+      </span>
+    </a>
+  </div>
+
+  <div class="sidebar-head">
+    <span class="mono label">All tools</span>
+    <span class="count chip">{{ tools.length }}</span>
+  </div>
+
+  <nav class="nav">
+    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link home" (click)="onNav()">
+      <span class="idx mono">//</span>
+      <span>Home</span>
+    </a>
+
+    @if (bookmarkedTools().length && !query) {
+      <div class="cat">
+        <div class="cat-title mono">★ Bookmarks</div>
+        @for (tool of bookmarkedTools(); track tool.slug) {
+          <a class="nav-link quiet" [routerLink]="['/tools', tool.slug]" (click)="onNav()">
+            <span class="idx mono">{{ tool.icon }}</span>
+            <span class="name">{{ tool.shortName }}</span>
+          </a>
+        }
+      </div>
+    }
+
+    @if (recentTools().length && !query) {
+      <div class="cat">
+        <div class="cat-title mono">Recent</div>
+        @for (tool of recentTools(); track tool.slug) {
+          <a class="nav-link quiet" [routerLink]="['/tools', tool.slug]" (click)="onNav()">
+            <span class="idx mono">{{ tool.icon }}</span>
+            <span class="name">{{ tool.shortName }}</span>
+          </a>
+        }
+      </div>
+    }
+
+    @for (cat of categories; track cat.id) {
+      @if (toolsFor(cat.id).length) {
+        <div class="cat">
+          <div class="cat-title mono">{{ cat.name }}</div>
+          @for (tool of toolsFor(cat.id); track tool.slug) {
+            <a
+              class="nav-link"
+              [routerLink]="['/tools', tool.slug]"
+              routerLinkActive="active"
+              (click)="onNav()"
+            >
+              <span class="idx mono">{{ tool.icon }}</span>
+              <span class="name">{{ tool.shortName }}</span>
+            </a>
+          }
+        </div>
+      }
+    }
+
+    @if (!tools.length) {
+      <p class="empty">No tools match “{{ query }}”.</p>
+    }
+  </nav>
+
+  <div class="sidebar-foot">
+    <p class="mono tip">Your paste never leaves this tab.</p>
+    <button type="button" class="btn btn-ghost btn-sm clear-local" (click)="clearLocal()">
+      Clear local data
+    </button>
+  </div>
+</aside>
+
+@if (open) {
+  <button type="button" class="backdrop" aria-label="Close menu" (click)="onNav()"></button>
+}

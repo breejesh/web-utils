@@ -1,0 +1,101 @@
+<article class="tool-page">
+  <header class="tool-head">
+    <div class="titles">
+      <nav class="crumbs mono" aria-label="Breadcrumb">
+        <a routerLink="/">Home</a>
+        <span aria-hidden="true">/</span>
+        <span>{{ categoryName }}</span>
+        <span aria-hidden="true">/</span>
+        <span class="current">{{ tool.shortName }}</span>
+      </nav>
+      <div class="title-row">
+        <h1>
+          <span class="eyebrow mono">{{ tool.icon }}.</span>
+          {{ tool.name }}
+        </h1>
+        <div class="local-actions">
+          <button
+            type="button"
+            class="btn btn-ghost btn-sm"
+            [class.on]="bookmarked()"
+            (click)="toggleBookmark()"
+            [attr.aria-pressed]="bookmarked()"
+            [attr.aria-label]="bookmarked() ? 'Remove bookmark' : 'Bookmark this tool'">
+            {{ bookmarked() ? '★' : '☆' }}
+            <span class="btn-label">{{ bookmarked() ? 'Saved' : 'Save' }}</span>
+          </button>
+          <button
+            type="button"
+            class="btn btn-ghost btn-sm"
+            (click)="toggleHistoryPanel()"
+            [attr.aria-expanded]="showHistory">
+            History
+            @if (history().length) {
+            <span class="count mono">{{ history().length }}</span>
+            }
+          </button>
+        </div>
+      </div>
+      <p class="desc">{{ tool.description }}</p>
+    </div>
+  </header>
+
+  <!-- <p class="privacy mono">{{ privacy }} Local bookmarks &amp; history only</p> -->
+
+  @if (showHistory) {
+  <section class="history-panel surface" aria-label="Local history for this tool">
+    <div class="history-head">
+      <h2 class="panel-title">Local history</h2>
+      <div class="panel-actions">
+        <button type="button" class="btn btn-danger btn-sm" (click)="clearToolHistory()" [disabled]="!history().length">
+          Clear
+        </button>
+        <button type="button" class="btn btn-ghost btn-sm" (click)="showHistory = false">Close</button>
+      </div>
+    </div>
+    @if (!history().length) {
+    <p class="empty">No saved pastes yet. Type or paste into this tool — entries appear here automatically.</p>
+    } @else {
+    <ul class="history-list">
+      @for (entry of history(); track entry.id) {
+      <li>
+        <button type="button" class="history-item" (click)="restore(entry)">
+          <span class="preview mono">{{ entry.preview }}</span>
+          <span class="meta mono">
+            <span class="field">{{ entry.field }}</span>
+            · {{ entry.at | date: 'short' }}
+            · {{ entry.value.length }} chars
+          </span>
+        </button>
+        <button type="button" class="btn btn-ghost btn-sm del" (click)="removeEntry(entry, $event)" aria-label="Remove entry">
+          ×
+        </button>
+      </li>
+      }
+    </ul>
+    }
+  </section>
+  }
+
+  <div class="tool-body">
+    <ng-content />
+  </div>
+
+  <details class="about surface">
+    <summary class="section-title">About this tool</summary>
+    <div class="about-body">
+      <p>{{ tool.longDescription }}</p>
+      <p class="seo-blurb">
+        Dedicated URL for <strong>{{ tool.name }}</strong> on
+        <span class="mono">utils.breejeshrathod.com</span> — processing stays in your browser.
+      </p>
+      @if (tool.keywords.length) {
+      <div class="tags">
+        @for (kw of tool.keywords; track kw) {
+        <span class="chip">{{ kw }}</span>
+        }
+      </div>
+      }
+    </div>
+  </details>
+</article>
