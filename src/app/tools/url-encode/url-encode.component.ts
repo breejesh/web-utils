@@ -2,13 +2,14 @@ import { Component, Input, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ToolDefinition } from '../../core/models/tool.model';
 import { ClipboardService } from '../../core/services/clipboard.service';
+import { IconComponent } from '../../shared/components/icon/icon.component';
 import { ToolLayoutComponent } from '../../shared/components/tool-layout/tool-layout.component';
 import { ToolHistoryDirective } from '../../shared/directives/tool-history.directive';
 
 @Component({
   selector: 'app-url-encode',
   standalone: true,
-  imports: [FormsModule, ToolLayoutComponent, ToolHistoryDirective],
+  imports: [FormsModule, ToolLayoutComponent, IconComponent, ToolHistoryDirective],
   template: `
     <app-tool-layout [tool]="tool">
       <div class="options surface">
@@ -17,24 +18,24 @@ import { ToolHistoryDirective } from '../../shared/directives/tool-history.direc
       </div>
       <div class="toolbar">
         <button type="button" class="btn btn-primary" (click)="encode()">Encode</button>
-        <button type="button" class="btn btn-primary" (click)="decode()">Decode</button>
-        <button type="button" class="btn btn-ghost" (click)="swap()">Swap</button>
-        <button type="button" class="btn btn-ghost" (click)="sample()">Sample</button>
-        <button type="button" class="btn btn-danger" (click)="clear()">Clear</button>
+        <button type="button" class="btn btn-ghost" (click)="decode()">Decode</button>
+        <button type="button" class="btn btn-ghost" (click)="swap()"><svg appIcon="arrow-left-right"></svg> Swap</button>
+        <button type="button" class="btn btn-quiet" (click)="sample()"><svg appIcon="sparkles"></svg> Sample</button>
+        <button type="button" class="btn btn-quiet" (click)="clear()"><svg appIcon="trash"></svg> Clear</button>
       </div>
       @if (error) { <div class="error-box">{{ error }}</div> }
       <div class="workspace-fill grid-2">
         <div class="panel surface workspace-pane">
           <div class="panel-head">
             <h3 class="panel-title">Input</h3>
-            <button type="button" class="btn btn-ghost btn-sm" (click)="clip.copy(input)">Copy</button>
+            <button type="button" class="btn btn-ghost btn-sm" (click)="clip.copy(input)"><svg appIcon="copy"></svg> Copy</button>
           </div>
           <textarea class="textarea fill" [(ngModel)]="input" [appToolHistory]="tool.slug" placeholder="Text or encoded URL…"></textarea>
         </div>
         <div class="panel surface workspace-pane">
           <div class="panel-head">
             <h3 class="panel-title">Output</h3>
-            <button type="button" class="btn btn-ghost btn-sm" (click)="clip.copy(output)" [disabled]="!output">Copy</button>
+            <button type="button" class="btn btn-ghost btn-sm" (click)="clip.copy(output)" [disabled]="!output"><svg appIcon="copy"></svg> Copy</button>
           </div>
           <textarea class="textarea fill" [(ngModel)]="output" placeholder="Result…"></textarea>
         </div>

@@ -1,107 +1,164 @@
 <section class="hero">
-  <p class="eyebrow mono">Privacy-first utilities</p>
-  <h1>
-    Everyday tools that
-    <span class="accent">never leave your browser</span>
-  </h1>
-  <p class="lead">
-    {{ siteName }} is a polished suite of client-side utilities — encode, format, convert, generate —
-    with the same visual language as the Breejesh portfolio. Each tool has its own URL for search and bookmarks.
+  <div class="hero-glow" aria-hidden="true"></div>
+
+  <p class="eyebrow">
+    <span class="dot-live" aria-hidden="true"></span>
+    {{ toolCount }} tools · 0 bytes uploaded · works offline
   </p>
-  <div class="hero-meta">
-    <span class="chip chip-accent">{{ allTools.length }} tools</span>
-    <span class="chip">SSR + prerender</span>
-    <span class="chip">Light & dark</span>
-    <span class="chip">No backend for your data</span>
-  </div>
-  <p class="privacy mono">{{ privacy }} Bookmarks and paste history stay in this browser.</p>
-</section>
 
-@if (bookmarkedTools().length) {
-<section class="block">
-  <div class="block-head">
-    <h2 class="section-title">Your bookmarks</h2>
-  </div>
-  <div class="pill-row">
-    @for (tool of bookmarkedTools(); track tool.slug) {
-    <a class="pill accent-pill" [routerLink]="['/tools', tool.slug]">★ {{ tool.shortName }}</a>
-    }
-  </div>
-</section>
-}
+  <h1>
+    Developer tools that<br />
+    <span class="accent">never leave your browser.</span>
+  </h1>
 
-@if (recentTools().length) {
-<section class="block">
-  <div class="block-head">
-    <h2 class="section-title">Recently used</h2>
-  </div>
-  <div class="pill-row">
-    @for (tool of recentTools(); track tool.slug) {
-    <a class="pill" [routerLink]="['/tools', tool.slug]">{{ tool.shortName }}</a>
-    }
-  </div>
-</section>
-}
+  <p class="lead">
+    Format JSON, decode JWTs, convert timestamps, test regex and more. Everything runs on your device, so tokens,
+    logs and customer data never touch a server.
+  </p>
 
-<section class="block">
-  <div class="block-head">
-    <h2 class="section-title">Featured</h2>
-  </div>
-  <div class="card-grid">
-    @for (tool of featured; track tool.slug) {
-    <a class="tool-card surface" [routerLink]="['/tools', tool.slug]">
-      <span class="idx mono">{{ tool.icon }}</span>
-      <h3>{{ tool.name }}</h3>
-      <p>{{ tool.description }}</p>
-      <span class="open mono">Open tool →</span>
-    </a>
-    }
-  </div>
-</section>
-
-<section class="block">
-  <div class="block-head">
-    <h2 class="section-title">Popular</h2>
-  </div>
-  <div class="pill-row">
-    @for (tool of popular; track tool.slug) {
-    <a class="pill" [routerLink]="['/tools', tool.slug]">{{ tool.shortName }}</a>
-    }
-  </div>
-</section>
-
-<section class="block">
-  <div class="block-head search-head">
-    <h2 class="section-title">All tools</h2>
-    <label class="field home-search">
-      <span class="visually-hidden">Filter tools</span>
-      <input class="input" type="search" placeholder="Filter by name or keyword…" [(ngModel)]="query" />
-    </label>
-  </div>
-
-  @for (cat of categories; track cat.id) {
-  @if (toolsIn(cat.id).length) {
-  <div class="category">
-    <div class="cat-head">
-      <h3>{{ cat.name }}</h3>
-      <p>{{ cat.description }}</p>
-    </div>
-    <div class="card-grid dense">
-      @for (tool of toolsIn(cat.id); track tool.slug) {
-      <a class="tool-card surface compact" [routerLink]="['/tools', tool.slug]">
-        <div class="row">
-          <span class="idx mono">{{ tool.icon }}</span>
-          <h3>{{ tool.shortName }}</h3>
-        </div>
-        <p>{{ tool.description }}</p>
-      </a>
+  <div class="omnibox" [class.has-value]="query()">
+    <div class="omni-row">
+      <svg appIcon="clipboard-paste" [size]="20" class="omni-icon"></svg>
+      <textarea
+        #box
+        class="omni-input"
+        [class.is-data]="isData()"
+        rows="1"
+        aria-label="Search tools or paste anything to identify it"
+        placeholder="Paste anything (JWT, JSON, Base64, epoch, cron, SQL), or search tools"
+        (input)="onInput(box.value)"
+        (keydown)="onKeydown($event)"
+        spellcheck="false"
+        autocomplete="off"></textarea>
+      @if (query()) {
+        <button type="button" class="btn btn-quiet btn-icon btn-sm" (click)="clear(box)" aria-label="Clear">
+          <svg appIcon="x"></svg>
+        </button>
       }
     </div>
-  </div>
-  }
-  }
 
-  @if (!tools.length) {
-  <p class="empty">No tools match your filter.</p>
+    @if (detections().length) {
+      <div class="detections" role="list" aria-live="polite">
+        @for (d of detections(); track d.slug; let first = $first) {
+          <button type="button" class="detection" [class.best]="first" role="listitem" (click)="open(d)">
+            <span class="det-icon"><svg [appIcon]="d.tool.icon" [size]="18"></svg></span>
+            <span class="det-text">
+              <span class="det-label">{{ d.label }}</span>
+              @if (d.preview) {
+                <span class="det-preview mono">{{ d.preview }}</span>
+              }
+            </span>
+            <span class="det-cta">
+              {{ first ? 'Open in ' + d.tool.shortName : d.tool.shortName }}
+              <svg appIcon="arrow-right" [size]="14"></svg>
+            </span>
+          </button>
+        }
+        <p class="det-note"><svg appIcon="lock" [size]="12"></svg> Detected on your device. Press Enter to open.</p>
+      </div>
+    } @else if (!query()) {
+      <div class="examples">
+        <span class="ex-label">Try:</span>
+        @for (ex of examples; track ex.label) {
+          <button type="button" class="ex" (click)="useExample(ex, box)">{{ ex.label }}</button>
+        }
+      </div>
+    }
+  </div>
+
+  <ul class="proof" aria-label="Why it is safe">
+    <li>
+      <svg appIcon="shield-check" [size]="16"></svg>
+      <span><strong>Zero uploads</strong> — enforced by a strict Content-Security-Policy</span>
+    </li>
+    <li>
+      <svg appIcon="wifi-off" [size]="16"></svg>
+      <span><strong>Works offline</strong> — installable as an app</span>
+    </li>
+    <li>
+      <svg appIcon="zap" [size]="16"></svg>
+      <span><strong>Instant</strong> — no sign-up, no ads, no waiting</span>
+    </li>
+    <li>
+      <svg appIcon="github" [size]="16"></svg>
+      <span><strong>Open source</strong> — <a [href]="repoUrl" target="_blank" rel="noopener">audit every line</a></span>
+    </li>
+  </ul>
+</section>
+
+@if (quickTools().length && !query()) {
+  <section class="quick" aria-label="Your tools">
+    <h2 class="quick-title">Jump back in</h2>
+    <div class="quick-row">
+      @for (q of quickTools(); track q.tool.slug) {
+        <a class="quick-pill" [routerLink]="['/tools', q.tool.slug]">
+          <svg [appIcon]="q.tool.icon" [size]="15"></svg>
+          {{ q.tool.shortName }}
+          @if (q.starred) {
+            <svg appIcon="star" [size]="11" class="star"></svg>
+          }
+        </a>
+      }
+    </div>
+  </section>
+}
+
+<section class="catalog" aria-labelledby="catalog-title">
+  <div class="catalog-head">
+    <h2 id="catalog-title">
+      @if (query() && !isData()) {
+        {{ matchCount() }} {{ matchCount() === 1 ? 'tool matches' : 'tools match' }} “{{ query() }}”
+      } @else {
+        All tools
+      }
+    </h2>
+    <nav class="cat-nav" aria-label="Categories">
+      @for (s of sections(); track s.cat.id) {
+        <a [routerLink]="[]" [fragment]="s.cat.id" class="cat-link">{{ s.cat.name }}</a>
+      }
+    </nav>
+  </div>
+
+  @for (s of sections(); track s.cat.id) {
+    <div class="category" [id]="s.cat.id">
+      <div class="cat-head">
+        <span class="cat-icon"><svg [appIcon]="s.cat.icon" [size]="15"></svg></span>
+        <h3>{{ s.cat.name }}</h3>
+        <p>{{ s.cat.description }}</p>
+      </div>
+      <div class="grid">
+        @for (tool of s.tools; track tool.slug) {
+          <a class="card" [routerLink]="['/tools', tool.slug]">
+            <span class="card-icon"><svg [appIcon]="tool.icon" [size]="18"></svg></span>
+            <span class="card-body">
+              <span class="card-title">{{ tool.name }}</span>
+              <span class="card-desc">{{ tool.description }}</span>
+            </span>
+            <svg appIcon="arrow-up-right" [size]="15" class="card-arrow"></svg>
+          </a>
+        }
+      </div>
+    </div>
+  } @empty {
+    <div class="no-results surface">
+      <p>No tools match “{{ query() }}”.</p>
+      <p class="sub">Try a format name like <em>json</em> or <em>base64</em>, or paste the data itself.</p>
+    </div>
   }
+</section>
+
+<section class="verify surface" aria-labelledby="verify-title">
+  <div class="verify-copy">
+    <p class="eyebrow small">Don’t trust us. Check for yourself.</p>
+    <h2 id="verify-title">Watch nothing happen.</h2>
+    <p>
+      Most online formatters and decoders send what you paste to their servers. These don’t, and you can check that
+      in about ten seconds.
+    </p>
+  </div>
+  <ol class="verify-steps">
+    <li><span class="n">1</span><span>Open DevTools (<kbd>F12</kbd>) and go to the <strong>Network</strong> tab.</span></li>
+    <li><span class="n">2</span><span>Paste a token, log or file into any tool.</span></li>
+    <li><span class="n">3</span><span>No requests are sent. Even better, turn off Wi-Fi: everything still works.</span></li>
+  </ol>
 </section>

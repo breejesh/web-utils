@@ -2,41 +2,47 @@ import { Component, Input, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ToolDefinition } from '../../core/models/tool.model';
 import { ClipboardService } from '../../core/services/clipboard.service';
+import { IconComponent } from '../../shared/components/icon/icon.component';
 import { ToolLayoutComponent } from '../../shared/components/tool-layout/tool-layout.component';
 import { ToolHistoryDirective } from '../../shared/directives/tool-history.directive';
 
 @Component({
   selector: 'app-csv-json',
   standalone: true,
-  imports: [FormsModule, ToolLayoutComponent, ToolHistoryDirective],
+  imports: [FormsModule, ToolLayoutComponent, IconComponent, ToolHistoryDirective],
   template: `
     <app-tool-layout [tool]="tool">
       <div class="options surface">
         <label class="check"><input type="checkbox" [(ngModel)]="headerRow" /> First row is header</label>
-        <label class="field" style="max-width:120px">
+        <label class="field" style="max-width:180px">
           <span class="field-label">Delimiter</span>
-          <input class="input mono" [(ngModel)]="delimiter" maxlength="1" />
+          <select class="select" [(ngModel)]="delimiter">
+            <option value=",">Comma ( , )</option>
+            <option value=";">Semicolon ( ; )</option>
+            <option [value]="'\t'">Tab</option>
+            <option value="|">Pipe ( | )</option>
+          </select>
         </label>
       </div>
       <div class="toolbar">
         <button type="button" class="btn btn-primary" (click)="csvToJson()">CSV → JSON</button>
-        <button type="button" class="btn btn-primary" (click)="jsonToCsv()">JSON → CSV</button>
-        <button type="button" class="btn btn-ghost" (click)="sample()">Sample</button>
-        <button type="button" class="btn btn-danger" (click)="clear()">Clear</button>
+        <button type="button" class="btn btn-ghost" (click)="jsonToCsv()">JSON → CSV</button>
+        <button type="button" class="btn btn-quiet" (click)="sample()"><svg appIcon="sparkles"></svg> Sample</button>
+        <button type="button" class="btn btn-quiet" (click)="clear()"><svg appIcon="trash"></svg> Clear</button>
       </div>
       @if (error) { <div class="error-box">{{ error }}</div> }
       <div class="workspace-fill grid-2">
         <div class="panel surface workspace-pane">
           <div class="panel-head">
             <h3 class="panel-title">CSV</h3>
-            <button type="button" class="btn btn-ghost btn-sm" (click)="clip.copy(csv)">Copy</button>
+            <button type="button" class="btn btn-ghost btn-sm" (click)="clip.copy(csv)"><svg appIcon="copy"></svg> Copy</button>
           </div>
           <textarea class="textarea fill" [(ngModel)]="csv" [appToolHistory]="tool.slug" historyField="csv" placeholder="a,b,c&#10;1,2,3"></textarea>
         </div>
         <div class="panel surface workspace-pane">
           <div class="panel-head">
             <h3 class="panel-title">JSON</h3>
-            <button type="button" class="btn btn-ghost btn-sm" (click)="clip.copy(json)">Copy</button>
+            <button type="button" class="btn btn-ghost btn-sm" (click)="clip.copy(json)"><svg appIcon="copy"></svg> Copy</button>
           </div>
           <textarea class="textarea fill" [(ngModel)]="json" [appToolHistory]="tool.slug" historyField="json" placeholder='[{"a":"1"}]'></textarea>
         </div>
@@ -97,7 +103,7 @@ export class CsvJsonComponent {
       const keys = Array.from(keySet);
       const lines = [keys.map((k) => this.escape(k, this.delimiter)).join(this.delimiter)];
       for (const row of records) {
-        lines.push(keys.map((k) => this.escape(String(row?.[k] ?? ''), this.delimiter)).join(this.delimiter));
+        lines.push(keys.map((k) => this.escape(cell(row?.[k]), this.delimiter)).join(this.delimiter));
       }
       this.csv = lines.join('\n');
     } catch (e) {
@@ -150,4 +156,10 @@ export class CsvJsonComponent {
   clear(): void {
     this.csv = this.json = this.error = '';
   }
+}
+
+/** Nested objects/arrays become JSON text so no data is lost (instead of "[object Object]"). */
+function cell(v: unknown): string {
+  if (v === null || v === undefined) return '';
+  return typeof v === 'object' ? JSON.stringify(v) : String(v);
 }

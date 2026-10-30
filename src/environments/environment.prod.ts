@@ -5,6 +5,7 @@ export const environment = {
   canonicalHost: 'utils.breejeshrathod.com',
   privacyTagline: '100% client-side. Your data never leaves this browser.',
   portfolioUrl: 'https://breejeshrathod.com',
+  repoUrl: 'https://github.com/breejesh/web-utils',
   firebase: {
     // Replace with your Firebase web app config when deploying.
     apiKey: '',

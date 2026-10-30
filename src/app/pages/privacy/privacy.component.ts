@@ -1,120 +1,192 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { environment } from '../../../environments/environment';
+import { ToastService } from '../../core/services/toast.service';
 import { SeoService } from '../../core/services/seo.service';
+import { UserStorageService } from '../../core/services/user-storage.service';
+import { IconComponent } from '../../shared/components/icon/icon.component';
 
 @Component({
   selector: 'app-privacy',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, IconComponent],
   template: `
     <article class="privacy">
-      <p class="eyebrow mono">Legal</p>
-      <h1>Privacy</h1>
+      <p class="eyebrow">Privacy</p>
+      <h1>Your data never leaves this browser.</h1>
       <p class="lead">
-        {{ siteName }} is built so your day-to-day data stays on your device. Tool inputs, files, tokens, and
-        passwords are processed in your browser and are not uploaded to our servers.
+        {{ siteName }} has no backend that receives your data. Every tool runs as JavaScript inside this tab, so
+        tokens, logs, files and passwords are processed on your device and nowhere else.
       </p>
 
-      <section class="surface block">
-        <h2>What never leaves your browser</h2>
-        <ul>
-          <li>Text you paste into tools (Base64, JSON, JWT, SQL, etc.)</li>
-          <li>Files you open for image, EXIF, or encoding tools</li>
-          <li>Generated passwords, hashes, and QR contents</li>
-          <li>Any intermediate results shown on screen</li>
-        </ul>
-      </section>
+      <div class="cards">
+        <section class="card surface">
+          <svg appIcon="shield-check" [size]="20"></svg>
+          <h2>Enforced, not promised</h2>
+          <p>
+            The site sends a strict <span class="mono">Content-Security-Policy</span> with
+            <span class="mono">connect-src 'self'</span>, so the browser blocks scripts on these pages from sending
+            requests to any other origin. You can see it in the response headers in DevTools.
+          </p>
+        </section>
+        <section class="card surface">
+          <svg appIcon="wifi-off" [size]="20"></svg>
+          <h2>Works offline</h2>
+          <p>
+            A service worker caches the app after your first visit. Turn off your network and every tool keeps
+            working, which is the clearest proof that nothing depends on a server.
+          </p>
+        </section>
+        <section class="card surface">
+          <svg appIcon="lock" [size]="20"></svg>
+          <h2>Secrets aren’t remembered</h2>
+          <p>
+            Tools that usually handle secrets (JWT, hashes, certificates, passwords) never save inputs unless you
+            switch history on. Share links leave those inputs out too.
+          </p>
+        </section>
+      </div>
 
-      <section class="surface block">
-        <h2>What we may collect</h2>
-        <ul>
-          <li>
-            <strong>Page analytics only</strong> (when configured): path, title, approximate region, and device
-            type via Firebase Analytics / GA4.
-          </li>
-          <li>We do <strong>not</strong> send tool payloads, form fields, or file contents to analytics.</li>
-          <li>
-            On your device only, we may store in <span class="mono">localStorage</span>: theme preference,
-            bookmarked tools, recently opened tools, and a short history of values you typed/pasted into tools
-            (so you can restore them later). This never leaves your browser.
-          </li>
-          <li>
-            You can clear bookmarks, recent tools, and history anytime via
-            <strong>Clear local data</strong> in the sidebar, or per-tool history on each tool page.
-          </li>
-        </ul>
-      </section>
-
-      <section class="surface block">
-        <h2>Third parties</h2>
+      <section class="block">
+        <h2>What stays on your device</h2>
         <p>
-          If analytics measurement IDs are configured for production, Google Analytics / Firebase may process
-          standard page-view events. You can block this with browser extensions or OS-level tracking protection.
+          Stored in this browser’s <span class="mono">localStorage</span> only, and never synced or uploaded:
+        </p>
+        <ul>
+          <li>Theme preference, bookmarked tools and recently opened tools.</li>
+          <li>
+            Recent inputs for non-sensitive tools, so you can restore them from <strong>History</strong>. You can
+            switch this off for any tool.
+          </li>
+        </ul>
+        <button type="button" class="btn btn-danger" (click)="clearAll()">
+          <svg appIcon="trash"></svg> Clear all local data now
+        </button>
+      </section>
+
+      <section class="block">
+        <h2>Share links</h2>
+        <p>
+          When you share a tool with your input, the input is stored after the <span class="mono">#</span> in the
+          URL. Browsers never send that part to a server, so only the person you send the link to can see it. It is
+          removed from the address bar as soon as the page opens.
         </p>
       </section>
 
-      <section class="surface block">
-        <h2>Contact</h2>
+      <section class="block">
+        <h2>Analytics</h2>
         <p>
-          Questions about this site:
-          <a [href]="portfolioUrl" target="_blank" rel="noopener noreferrer">breejeshrathod.com</a>
+          No analytics or tracking scripts are loaded at the moment. If page-view analytics are ever added, they
+          will record only the page path. They will never include tool inputs, files or URL fragments, and this
+          page will be updated first.
         </p>
-        <a routerLink="/" class="btn btn-primary">Back to tools</a>
+      </section>
+
+      <section class="block">
+        <h2>Hosting</h2>
+        <p>
+          Static files are served by Firebase Hosting (Google), which, like any web host, may keep standard
+          request logs such as IP address and user agent for security purposes. Those logs never include anything
+          you type or open in a tool.
+        </p>
+      </section>
+
+      <section class="block">
+        <h2>Verify it yourself</h2>
+        <p>
+          The full source is on <a [href]="repoUrl" target="_blank" rel="noopener">GitHub</a>. Questions? Reach out
+          via <a [href]="portfolioUrl" target="_blank" rel="noopener">breejeshrathod.com</a>.
+        </p>
+        <a routerLink="/" class="btn btn-primary"><svg appIcon="arrow-right"></svg> Back to the tools</a>
       </section>
     </article>
   `,
   styles: [
     `
       .privacy {
-        max-width: 720px;
+        max-width: 820px;
+        margin: 0 auto;
+        padding-top: clamp(0.5rem, 3vw, 2rem);
       }
       .eyebrow {
+        margin: 0 0 0.75rem;
         color: var(--accent-color);
-        margin: 0 0 0.5rem;
+        font-weight: 600;
+        font-size: 13px;
       }
       h1 {
         margin: 0;
-        color: var(--text-primary);
-        font-size: clamp(1.8rem, 3vw, 2.4rem);
+        font-size: clamp(2rem, 4.5vw, 2.9rem);
+        letter-spacing: -0.04em;
       }
       .lead {
-        color: var(--text-secondary);
-        line-height: 1.6;
-        font-size: 1.05rem;
+        font-size: 1.08rem;
+        line-height: 1.65;
+        margin: 1rem 0 0;
+        max-width: 62ch;
+      }
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 0.75rem;
+        margin: 2rem 0 1rem;
+      }
+      .card {
+        padding: 1.1rem 1.15rem;
+      }
+      .card .icon {
+        color: var(--accent-color);
+      }
+      .card h2 {
+        margin: 0.75rem 0 0.4rem;
+        font-size: 1rem;
+      }
+      .card p {
+        margin: 0;
+        font-size: 13.5px;
       }
       .block {
-        padding: 1.15rem 1.25rem;
-        margin-top: 1rem;
+        padding: 1.5rem 0;
+        border-top: 1px solid var(--border-color);
       }
-      h2 {
-        margin: 0 0 0.65rem;
-        color: var(--text-primary);
+      .block h2 {
+        margin: 0 0 0.5rem;
         font-size: 1.1rem;
       }
-      ul {
-        margin: 0;
-        padding-left: 1.15rem;
-        color: var(--text-secondary);
-        line-height: 1.55;
+      .block p {
+        margin: 0 0 0.5rem;
+        max-width: 68ch;
       }
-      p {
-        color: var(--text-secondary);
-        line-height: 1.55;
+      ul {
+        margin: 0 0 1rem;
+        padding-left: 1.15rem;
+      }
+      li + li {
+        margin-top: 0.3rem;
+      }
+      strong {
+        color: var(--text-primary);
       }
       .btn {
-        margin-top: 0.85rem;
-        display: inline-flex;
+        margin-top: 0.5rem;
       }
     `,
   ],
 })
 export class PrivacyComponent implements OnInit {
   private readonly seo = inject(SeoService);
+  private readonly storage = inject(UserStorageService);
+  private readonly toast = inject(ToastService);
   readonly siteName = environment.siteName;
   readonly portfolioUrl = environment.portfolioUrl;
+  readonly repoUrl = environment.repoUrl;
 
   ngOnInit(): void {
     this.seo.setPrivacy();
+  }
+
+  clearAll(): void {
+    this.storage.clearAllLocalData();
+    this.toast.success('All local data cleared');
   }
 }

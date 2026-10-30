@@ -9,7 +9,8 @@ export function downloadBlob(filename: string, blob: Blob): void {
   a.href = url;
   a.download = filename;
   a.click();
-  URL.revokeObjectURL(url);
+  // Revoking synchronously can cancel the download in some browsers (Firefox, Safari).
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 export function downloadDataUrl(filename: string, dataUrl: string): void {

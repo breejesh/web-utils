@@ -1,40 +1,58 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" dir="ltr">
 
 <head>
   <meta charset="utf-8" />
-  <title>Web Utils — Privacy-First Client-Side Developer Tools</title>
+  <title>Web Utils — Private Developer Tools That Never Leave Your Browser</title>
   <base href="/" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta
-    name="description"
-    content="Free, privacy-first web utilities running 100% in your browser: Base64, JSON Formatter, JWT Debugger, EVTX Viewer, Regex Tester, Unix Timestamp Converter, Hash Generator, and more. Zero server uploads." />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="description"
+    content="Free developer tools that run 100% in your browser — JSON formatter, Base64, JWT decoder, regex tester, epoch converter, hash generator and more. No uploads, no sign-up, works offline." />
   <meta name="author" content="Breejesh Rathod" />
-  <meta name="robots" content="index, follow, max-image-preview:large" />
-  <meta name="theme-color" content="#0b0f19" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
   <meta name="color-scheme" content="dark light" />
+  <meta name="theme-color" content="#08080a" />
+  <meta name="application-name" content="Web Utils" />
+  <meta name="apple-mobile-web-app-title" content="Web Utils" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="format-detection" content="telephone=no" />
   <meta name="google-site-verification" content="mgvYnjgFnDvCUFdh8qT6U4-icFMLil78h6RV_fbwnMM" />
   <meta property="og:site_name" content="Web Utils" />
+  <meta property="og:locale" content="en_US" />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Web Utils — Privacy-First Client-Side Developer Tools" />
-  <meta property="og:description" content="Free, privacy-first web utilities running 100% in your browser. Zero server uploads." />
+  <meta property="og:title" content="Web Utils — Private Developer Tools That Never Leave Your Browser" />
+  <meta property="og:description" content="Free developer tools that run 100% in your browser. No uploads, no sign-up, works offline." />
   <meta property="og:url" content="https://utils.breejeshrathod.com/" />
-  <meta property="og:image" content="https://utils.breejeshrathod.com/doc-images/homepage-dark.png" />
+  <meta property="og:image" content="https://utils.breejeshrathod.com/og/home.jpg" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Web Utils — Privacy-First Client-Side Developer Tools" />
-  <meta name="twitter:description" content="Free, privacy-first web utilities running 100% in your browser. Zero server uploads." />
-  <meta name="twitter:image" content="https://utils.breejeshrathod.com/doc-images/homepage-dark.png" />
+  <meta name="twitter:title" content="Web Utils — Private Developer Tools That Never Leave Your Browser" />
+  <meta name="twitter:description" content="Free developer tools that run 100% in your browser. No uploads, no sign-up, works offline." />
+  <meta name="twitter:image" content="https://utils.breejeshrathod.com/og/home.jpg" />
   <link rel="canonical" href="https://utils.breejeshrathod.com/" />
-  <link rel="icon" type="image/x-icon" href="favicon.ico" />
-  <link rel="icon" type="image/svg+xml" media="(prefers-color-scheme: dark)" href="logo-dark.svg" />
-  <link rel="icon" type="image/svg+xml" media="(prefers-color-scheme: light)" href="logo-light.svg" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="icon" href="favicon.ico" sizes="48x48" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
   <link rel="manifest" href="manifest.webmanifest" />
-  <link rel="robots" href="robots.txt" />
+  <link rel="author" href="https://breejeshrathod.com" />
+  <!-- Apply the saved theme before first paint (keep in sync with ThemeService). -->
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('web-utils-theme');
+        if (t !== 'dark' && t !== 'light') t = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        if (t === 'light') document.documentElement.classList.add('light-theme');
+        document.documentElement.style.colorScheme = t;
+      } catch (e) {}
+    })();
+  </script>
 </head>
 
 <body>
   <app-root></app-root>
+  <noscript>
+    <p style="padding:1rem;font-family:system-ui,sans-serif">Web Utils runs entirely in your browser, so it needs JavaScript. Please enable it to use the tools.</p>
+  </noscript>
 </body>
 
 </html>

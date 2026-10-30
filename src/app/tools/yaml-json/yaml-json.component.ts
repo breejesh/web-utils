@@ -3,34 +3,35 @@ import { FormsModule } from '@angular/forms';
 import { dump as yamlDump, load as yamlLoad } from 'js-yaml';
 import { ToolDefinition } from '../../core/models/tool.model';
 import { ClipboardService } from '../../core/services/clipboard.service';
+import { IconComponent } from '../../shared/components/icon/icon.component';
 import { ToolLayoutComponent } from '../../shared/components/tool-layout/tool-layout.component';
 import { ToolHistoryDirective } from '../../shared/directives/tool-history.directive';
 
 @Component({
   selector: 'app-yaml-json',
   standalone: true,
-  imports: [FormsModule, ToolLayoutComponent, ToolHistoryDirective],
+  imports: [FormsModule, ToolLayoutComponent, IconComponent, ToolHistoryDirective],
   template: `
     <app-tool-layout [tool]="tool">
       <div class="toolbar">
         <button type="button" class="btn btn-primary" (click)="yamlToJson()">YAML → JSON</button>
-        <button type="button" class="btn btn-primary" (click)="jsonToYaml()">JSON → YAML</button>
-        <button type="button" class="btn btn-ghost" (click)="sample()">Sample</button>
-        <button type="button" class="btn btn-danger" (click)="clear()">Clear</button>
+        <button type="button" class="btn btn-ghost" (click)="jsonToYaml()">JSON → YAML</button>
+        <button type="button" class="btn btn-quiet" (click)="sample()"><svg appIcon="sparkles"></svg> Sample</button>
+        <button type="button" class="btn btn-quiet" (click)="clear()"><svg appIcon="trash"></svg> Clear</button>
       </div>
       @if (error) { <div class="error-box">{{ error }}</div> }
       <div class="workspace-fill grid-2">
         <div class="panel surface workspace-pane">
           <div class="panel-head">
             <h3 class="panel-title">YAML</h3>
-            <button type="button" class="btn btn-ghost btn-sm" (click)="clip.copy(yaml)">Copy</button>
+            <button type="button" class="btn btn-ghost btn-sm" (click)="clip.copy(yaml)"><svg appIcon="copy"></svg> Copy</button>
           </div>
           <textarea class="textarea fill" [(ngModel)]="yaml" [appToolHistory]="tool.slug" historyField="yaml" placeholder="key: value"></textarea>
         </div>
         <div class="panel surface workspace-pane">
           <div class="panel-head">
             <h3 class="panel-title">JSON</h3>
-            <button type="button" class="btn btn-ghost btn-sm" (click)="clip.copy(json)">Copy</button>
+            <button type="button" class="btn btn-ghost btn-sm" (click)="clip.copy(json)"><svg appIcon="copy"></svg> Copy</button>
           </div>
           <textarea class="textarea fill" [(ngModel)]="json" [appToolHistory]="tool.slug" historyField="json" placeholder='{"key":"value"}'></textarea>
         </div>

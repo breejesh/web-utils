@@ -3,6 +3,7 @@ import { Component, Input, OnDestroy, OnInit, PLATFORM_ID, inject } from '@angul
 import { FormsModule } from '@angular/forms';
 import { ToolDefinition } from '../../core/models/tool.model';
 import { ClipboardService } from '../../core/services/clipboard.service';
+import { IconComponent } from '../../shared/components/icon/icon.component';
 import { ToolLayoutComponent } from '../../shared/components/tool-layout/tool-layout.component';
 import { ToolHistoryDirective } from '../../shared/directives/tool-history.directive';
 
@@ -33,7 +34,7 @@ const CODE_SNIPPETS: { lang: string; now: string; from: string }[] = [
 @Component({
   selector: 'app-timestamp-converter',
   standalone: true,
-  imports: [FormsModule, ToolLayoutComponent, ToolHistoryDirective],
+  imports: [FormsModule, ToolLayoutComponent, IconComponent, ToolHistoryDirective],
   templateUrl: './timestamp-converter.component.html',
   styleUrl: './timestamp-converter.component.scss',
 })

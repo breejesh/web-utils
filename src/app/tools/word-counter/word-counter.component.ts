@@ -1,13 +1,14 @@
 import { Component, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ToolDefinition } from '../../core/models/tool.model';
+import { IconComponent } from '../../shared/components/icon/icon.component';
 import { ToolLayoutComponent } from '../../shared/components/tool-layout/tool-layout.component';
 import { ToolHistoryDirective } from '../../shared/directives/tool-history.directive';
 
 @Component({
   selector: 'app-word-counter',
   standalone: true,
-  imports: [FormsModule, ToolLayoutComponent, ToolHistoryDirective],
+  imports: [FormsModule, ToolLayoutComponent, IconComponent, ToolHistoryDirective],
   template: `
     <app-tool-layout [tool]="tool">
       <div class="stat-grid">
@@ -21,7 +22,7 @@ import { ToolHistoryDirective } from '../../shared/directives/tool-history.direc
       <div class="panel surface" style="margin-top:1rem">
         <div class="panel-head">
           <h3 class="panel-title">Text</h3>
-          <button type="button" class="btn btn-danger btn-sm" (click)="text = ''; update()">Clear</button>
+          <button type="button" class="btn btn-quiet btn-sm" (click)="text = ''; update()"><svg appIcon="trash"></svg> Clear</button>
         </div>
         <textarea class="textarea fill" [(ngModel)]="text" [appToolHistory]="tool.slug" historyField="text" (ngModelChange)="update()" placeholder="Paste or type…" style="min-height: var(--workspace-height)"></textarea>
       </div>

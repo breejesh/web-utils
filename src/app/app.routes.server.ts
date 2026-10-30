@@ -5,6 +5,7 @@ import { TOOLS } from './core/data/tools.registry';
 export const serverRoutes: ServerRoute[] = [
   { path: '', renderMode: RenderMode.Prerender },
   { path: 'privacy', renderMode: RenderMode.Prerender },
+  { path: '404', renderMode: RenderMode.Prerender },
   ...TOOLS.map(
     (t): ServerRoute => ({
       path: `tools/${t.slug}`,

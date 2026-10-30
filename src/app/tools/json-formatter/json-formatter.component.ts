@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ToolDefinition } from '../../core/models/tool.model';
 import { ClipboardService } from '../../core/services/clipboard.service';
 import { ToastService } from '../../core/services/toast.service';
+import { IconComponent } from '../../shared/components/icon/icon.component';
 import { ToolLayoutComponent } from '../../shared/components/tool-layout/tool-layout.component';
 import { ToolHistoryDirective } from '../../shared/directives/tool-history.directive';
 import { downloadText } from '../../shared/utils/download';
@@ -23,7 +24,7 @@ const STORAGE_KEY = 'web-utils-json-formatter';
 @Component({
   selector: 'app-json-formatter',
   standalone: true,
-  imports: [FormsModule, ToolLayoutComponent, NgTemplateOutlet, ToolHistoryDirective],
+  imports: [FormsModule, ToolLayoutComponent, IconComponent, NgTemplateOutlet, ToolHistoryDirective],
   templateUrl: './json-formatter.component.html',
   styleUrl: './json-formatter.component.scss',
 })
@@ -37,6 +38,7 @@ export class JsonFormatterComponent implements OnInit {
   output = '';
   error = '';
   errorLine: number | null = null;
+  errorColumn: number | null = null;
   ok = false;
   indent: 2 | 3 | 4 | 0 = 2;
   sortKeys = false;
@@ -75,7 +77,7 @@ export class JsonFormatterComponent implements OnInit {
 
   private run(spaces: number, validateOnly: boolean): void {
     this.error = '';
-    this.errorLine = null;
+    this.errorLine = this.errorColumn = null;
     this.ok = false;
     this.tree = [];
     this.parsed = null;
@@ -101,8 +103,9 @@ export class JsonFormatterComponent implements OnInit {
       this.error = msg;
       const m = msg.match(/position\s+(\d+)/i) || msg.match(/at position (\d+)/i);
       if (m) {
-        const pos = Number(m[1]);
-        this.errorLine = this.input.slice(0, pos).split('\n').length;
+        const before = this.input.slice(0, Number(m[1])).split('\n');
+        this.errorLine = before.length;
+        this.errorColumn = before[before.length - 1].length + 1;
       }
     }
   }
@@ -228,7 +231,7 @@ export class JsonFormatterComponent implements OnInit {
     this.input = this.output = this.error = '';
     this.ok = false;
     this.tree = [];
-    this.errorLine = null;
+    this.errorLine = this.errorColumn = null;
     if (isPlatformBrowser(this.platformId)) localStorage.removeItem(STORAGE_KEY);
   }
 

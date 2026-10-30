@@ -1,22 +1,23 @@
-import { Component, Input, inject } from '@angular/core';
+import { Component, Input, SecurityContext, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { DomSanitizer } from '@angular/platform-browser';
 import { marked } from 'marked';
 import { ToolDefinition } from '../../core/models/tool.model';
 import { ClipboardService } from '../../core/services/clipboard.service';
+import { IconComponent } from '../../shared/components/icon/icon.component';
 import { ToolLayoutComponent } from '../../shared/components/tool-layout/tool-layout.component';
 import { ToolHistoryDirective } from '../../shared/directives/tool-history.directive';
 
 @Component({
   selector: 'app-markdown-preview',
   standalone: true,
-  imports: [FormsModule, ToolLayoutComponent, ToolHistoryDirective],
+  imports: [FormsModule, ToolLayoutComponent, IconComponent, ToolHistoryDirective],
   template: `
     <app-tool-layout [tool]="tool">
       <div class="toolbar">
-        <button type="button" class="btn btn-ghost btn-sm" (click)="sample()">Sample</button>
-        <button type="button" class="btn btn-ghost btn-sm" (click)="clip.copy(html)" [disabled]="!html">Copy HTML</button>
-        <button type="button" class="btn btn-danger btn-sm" (click)="md = ''; render()">Clear</button>
+        <button type="button" class="btn btn-quiet btn-sm" (click)="sample()"><svg appIcon="sparkles"></svg> Sample</button>
+        <button type="button" class="btn btn-ghost btn-sm" (click)="clip.copy(html)" [disabled]="!html"><svg appIcon="copy"></svg> Copy HTML</button>
+        <button type="button" class="btn btn-quiet btn-sm" (click)="md = ''; render()"><svg appIcon="trash"></svg> Clear</button>
       </div>
 
       <div class="workspace-fill grid-2 md-workspace">
@@ -39,7 +40,7 @@ import { ToolHistoryDirective } from '../../shared/directives/tool-history.direc
           <div class="panel-head">
             <h3 class="panel-title">Preview</h3>
           </div>
-          <div class="scroll-pane md-preview" [innerHTML]="safeHtml"></div>
+          <div class="scroll-pane md-preview" [innerHTML]="html"></div>
         </div>
       </div>
     </app-tool-layout>
@@ -78,7 +79,6 @@ export class MarkdownPreviewComponent {
   private readonly sanitizer = inject(DomSanitizer);
   md = '';
   html = '';
-  safeHtml: SafeHtml = '';
 
   constructor() {
     marked.setOptions({ gfm: true, breaks: true });
@@ -86,8 +86,8 @@ export class MarkdownPreviewComponent {
 
   render(): void {
     const raw = marked.parse(this.md || '', { async: false }) as string;
-    this.html = raw;
-    this.safeHtml = this.sanitizer.bypassSecurityTrustHtml(raw);
+    // Sanitize: markdown may contain raw HTML (e.g. <img onerror>), and inputs can arrive via share links.
+    this.html = this.sanitizer.sanitize(SecurityContext.HTML, raw) ?? '';
   }
 
   sample(): void {

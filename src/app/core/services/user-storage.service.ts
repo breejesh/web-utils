@@ -1,10 +1,12 @@
 import { isPlatformBrowser } from '@angular/common';
 import { Injectable, PLATFORM_ID, computed, inject, signal } from '@angular/core';
+import { getToolBySlug } from '../data/tools.registry';
 
 const KEYS = {
   bookmarks: 'web-utils:bookmarks',
   recent: 'web-utils:recent-tools',
   history: 'web-utils:tool-history',
+  historyPrefs: 'web-utils:history-prefs',
 } as const;
 
 const MAX_RECENT = 12;
@@ -41,6 +43,10 @@ export class UserStorageService {
   private readonly bookmarksSig = signal<string[]>(this.loadJson(KEYS.bookmarks, [] as string[]));
   private readonly recentSig = signal<RecentToolEntry[]>(this.loadJson(KEYS.recent, [] as RecentToolEntry[]));
   private readonly historySig = signal<HistoryStore>(this.loadJson(KEYS.history, {} as HistoryStore));
+  /** Explicit per-tool opt-in/out. Missing entries fall back to the tool default (off for sensitive tools). */
+  private readonly historyPrefsSig = signal<Record<string, boolean>>(this.loadJson(KEYS.historyPrefs, {} as Record<string, boolean>));
+  /** Latest in-memory value per tool field (never persisted); used for share links. */
+  private readonly liveValues = new Map<string, string>();
 
   /** Tools subscribe to restore pastes into their fields. */
   readonly restoreRequest = signal<RestoreRequest | null>(null);
@@ -48,6 +54,39 @@ export class UserStorageService {
   readonly bookmarks = this.bookmarksSig.asReadonly();
   readonly recentTools = this.recentSig.asReadonly();
   readonly bookmarkCount = computed(() => this.bookmarksSig().length);
+
+  constructor() {
+    // Older versions saved history for every tool; drop anything stored for tools that are now opt-in.
+    const store = this.historySig();
+    const stale = Object.keys(store).filter((slug) => !this.isHistoryEnabled(slug));
+    if (stale.length) {
+      const next = { ...store };
+      stale.forEach((slug) => delete next[slug]);
+      this.historySig.set(next);
+      this.save(KEYS.history, next);
+    }
+  }
+
+  isHistoryEnabled(slug: string): boolean {
+    const pref = this.historyPrefsSig()[slug];
+    if (pref !== undefined) return pref;
+    return !getToolBySlug(slug)?.sensitive;
+  }
+
+  setHistoryEnabled(slug: string, enabled: boolean): void {
+    const next = { ...this.historyPrefsSig(), [slug]: enabled };
+    this.historyPrefsSig.set(next);
+    this.save(KEYS.historyPrefs, next);
+    if (!enabled) this.clearHistory(slug);
+  }
+
+  setLiveValue(slug: string, field: string, value: string): void {
+    this.liveValues.set(slug + ':' + field, value);
+  }
+
+  liveValue(slug: string, field: string): string {
+    return this.liveValues.get(slug + ':' + field) ?? '';
+  }
 
   isBookmarked(slug: string): boolean {
     return this.bookmarksSig().includes(slug);
@@ -91,6 +130,7 @@ export class UserStorageService {
   pushHistory(slug: string, value: string, field = 'input'): void {
     const trimmed = value ?? '';
     if (!this.isBrowser) return;
+    if (!this.isHistoryEnabled(slug)) return;
     if (trimmed.trim().length < 2) return;
     const clipped =
       trimmed.length > MAX_HISTORY_VALUE_LEN ? trimmed.slice(0, MAX_HISTORY_VALUE_LEN) : trimmed;
@@ -149,10 +189,17 @@ export class UserStorageService {
     this.clearBookmarks();
     this.clearRecent();
     this.clearHistory();
+    this.historyPrefsSig.set({});
+    this.save(KEYS.historyPrefs, {});
   }
 
   requestRestore(slug: string, value: string, field = 'input'): void {
     this.restoreRequest.set({ slug, field, value, nonce: Date.now() });
+  }
+
+  /** Called by the field that applied a restore so it is not re-applied on the next visit. */
+  consumeRestore(nonce: number): void {
+    if (this.restoreRequest()?.nonce === nonce) this.restoreRequest.set(null);
   }
 
   private makePreview(value: string): string {

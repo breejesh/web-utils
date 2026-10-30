@@ -2,12 +2,13 @@ import { Component, Input, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ToolDefinition } from '../../core/models/tool.model';
 import { ClipboardService } from '../../core/services/clipboard.service';
+import { IconComponent } from '../../shared/components/icon/icon.component';
 import { ToolLayoutComponent } from '../../shared/components/tool-layout/tool-layout.component';
 
 @Component({
   selector: 'app-color-converter',
   standalone: true,
-  imports: [FormsModule, ToolLayoutComponent],
+  imports: [FormsModule, ToolLayoutComponent, IconComponent],
   template: `
     <app-tool-layout [tool]="tool">
       <div class="layout">
@@ -17,21 +18,21 @@ import { ToolLayoutComponent } from '../../shared/components/tool-layout/tool-la
             <span class="field-label">HEX</span>
             <div class="row">
               <input class="input mono" [(ngModel)]="hex" (ngModelChange)="fromHex()" />
-              <button type="button" class="btn btn-ghost btn-sm" (click)="clip.copy(hex)">Copy</button>
+              <button type="button" class="btn btn-ghost btn-sm" (click)="clip.copy(hex)"><svg appIcon="copy"></svg> Copy</button>
             </div>
           </label>
           <label class="field">
             <span class="field-label">RGB</span>
             <div class="row">
               <input class="input mono" [ngModel]="rgbStr" (ngModelChange)="fromRgb($event)" />
-              <button type="button" class="btn btn-ghost btn-sm" (click)="clip.copy(rgbStr)">Copy</button>
+              <button type="button" class="btn btn-ghost btn-sm" (click)="clip.copy(rgbStr)"><svg appIcon="copy"></svg> Copy</button>
             </div>
           </label>
           <label class="field">
             <span class="field-label">HSL</span>
             <div class="row">
               <input class="input mono" [ngModel]="hslStr" (ngModelChange)="fromHsl($event)" />
-              <button type="button" class="btn btn-ghost btn-sm" (click)="clip.copy(hslStr)">Copy</button>
+              <button type="button" class="btn btn-ghost btn-sm" (click)="clip.copy(hslStr)"><svg appIcon="copy"></svg> Copy</button>
             </div>
           </label>
           <label class="field">

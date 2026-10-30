@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import QRCode from 'qrcode';
 import { ToolDefinition } from '../../core/models/tool.model';
 import { ToastService } from '../../core/services/toast.service';
+import { IconComponent } from '../../shared/components/icon/icon.component';
 import { ToolLayoutComponent } from '../../shared/components/tool-layout/tool-layout.component';
 import { ToolHistoryDirective } from '../../shared/directives/tool-history.directive';
 import { downloadDataUrl } from '../../shared/utils/download';
@@ -11,7 +12,7 @@ import { downloadDataUrl } from '../../shared/utils/download';
 @Component({
   selector: 'app-qr-code',
   standalone: true,
-  imports: [FormsModule, ToolLayoutComponent, ToolHistoryDirective],
+  imports: [FormsModule, ToolLayoutComponent, IconComponent, ToolHistoryDirective],
   template: `
     <app-tool-layout [tool]="tool">
       <div class="options surface">
@@ -27,7 +28,7 @@ import { downloadDataUrl } from '../../shared/utils/download';
       <div class="toolbar">
         <button type="button" class="btn btn-primary" (click)="generate()">Generate</button>
         <button type="button" class="btn btn-ghost" (click)="download()" [disabled]="!dataUrl">Download PNG</button>
-        <button type="button" class="btn btn-ghost" (click)="sample()">Sample</button>
+        <button type="button" class="btn btn-quiet" (click)="sample()"><svg appIcon="sparkles"></svg> Sample</button>
       </div>
       @if (error) { <div class="error-box">{{ error }}</div> }
       <div class="grid-2">

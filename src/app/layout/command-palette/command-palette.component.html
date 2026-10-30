@@ -1,0 +1,67 @@
+@if (palette.isOpen()) {
+  <div class="overlay" (click)="close()" aria-hidden="true"></div>
+  <div class="palette" role="dialog" aria-modal="true" aria-label="Search tools and commands">
+    <div class="search-row">
+      <svg appIcon="search" [size]="18"></svg>
+      <input
+        #input
+        class="search-input"
+        type="text"
+        role="combobox"
+        aria-expanded="true"
+        aria-controls="palette-list"
+        aria-autocomplete="list"
+        [attr.aria-activedescendant]="'palette-item-' + active()"
+        placeholder="Search tools — or paste a JWT, JSON, timestamp…"
+        [value]="query()"
+        (input)="onInput($any($event.target).value)"
+        (keydown)="onKeydown($event)"
+        autocomplete="off"
+        spellcheck="false" />
+      <kbd class="esc" (click)="close()">Esc</kbd>
+    </div>
+
+    <div class="list" id="palette-list" role="listbox" #list>
+      @for (g of groups(); track g.name) {
+        <div class="group" role="presentation">
+          <div class="group-title" role="presentation">{{ g.name }}</div>
+          @for (entry of g.items; track entry.item.id) {
+            <div
+              class="item"
+              role="option"
+              [id]="'palette-item-' + entry.index"
+              [attr.data-index]="entry.index"
+              [attr.aria-selected]="entry.index === active()"
+              [class.active]="entry.index === active()"
+              (mousemove)="active() !== entry.index && active.set(entry.index)"
+              (click)="select(entry.index)">
+              <span class="item-icon"><svg [appIcon]="entry.item.icon" [size]="16"></svg></span>
+              <span class="item-text">
+                <span class="item-title">{{ entry.item.title }}</span>
+                @if (entry.item.subtitle) {
+                  <span class="item-sub">{{ entry.item.subtitle }}</span>
+                }
+              </span>
+              @if (entry.item.badge) {
+                <span class="item-badge">{{ entry.item.badge }}</span>
+              }
+              <svg appIcon="corner-down-left" [size]="14" class="enter-hint"></svg>
+            </div>
+          }
+        </div>
+      } @empty {
+        <div class="empty-state">
+          <p>No tools match “{{ query() }}”.</p>
+          <p class="sub">Try a format name like <em>json</em>, <em>base64</em> or <em>epoch</em>, or paste the data itself.</p>
+        </div>
+      }
+    </div>
+
+    <div class="foot">
+      <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+      <span><kbd>↵</kbd> open</span>
+      <span class="spacer"></span>
+      <span class="local"><svg appIcon="lock" [size]="12"></svg> Searches stay on this device</span>
+    </div>
+  </div>
+}

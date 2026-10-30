@@ -75,7 +75,7 @@ export class DateCalculatorComponent implements OnInit {
   addResult = '';
 
   ngOnInit(): void {
-    const today = new Date().toISOString().slice(0, 10);
+    const today = localIsoDate(new Date());
     this.start = today;
     this.end = today;
     this.base = today;
@@ -114,7 +114,9 @@ export class DateCalculatorComponent implements OnInit {
       return;
     }
     const days = Math.round((b.getTime() - a.getTime()) / 86400000);
-    this.diffResult = `${days} day(s)\n${Math.abs(days / 7).toFixed(1)} weeks`;
+    const weeks = Math.trunc(days / 7);
+    const rem = days % 7;
+    this.diffResult = `${days} day${Math.abs(days) === 1 ? '' : 's'}\n${weeks} week${Math.abs(weeks) === 1 ? '' : 's'}${rem ? ` and ${Math.abs(rem)} day${Math.abs(rem) === 1 ? '' : 's'}` : ''}`;
   }
 
   calcAdd(): void {
@@ -124,6 +126,11 @@ export class DateCalculatorComponent implements OnInit {
       return;
     }
     a.setDate(a.getDate() + Number(this.days || 0));
-    this.addResult = a.toISOString().slice(0, 10) + '\n' + a.toDateString();
+    this.addResult = localIsoDate(a) + '\n' + a.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
   }
+}
+
+/** YYYY-MM-DD in local time (toISOString would shift to UTC and can be off by a day). */
+function localIsoDate(d: Date): string {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }

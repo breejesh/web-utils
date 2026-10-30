@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ToolDefinition } from '../../core/models/tool.model';
 import { ClipboardService } from '../../core/services/clipboard.service';
 import { ToastService } from '../../core/services/toast.service';
+import { IconComponent } from '../../shared/components/icon/icon.component';
 import { ToolLayoutComponent } from '../../shared/components/tool-layout/tool-layout.component';
 import { ToolHistoryDirective } from '../../shared/directives/tool-history.directive';
 import { downloadBlob, downloadText } from '../../shared/utils/download';
@@ -25,7 +26,7 @@ type Charset = (typeof CHARSETS)[number] | 'AUTO';
 @Component({
   selector: 'app-base64',
   standalone: true,
-  imports: [FormsModule, ToolLayoutComponent, ToolHistoryDirective],
+  imports: [FormsModule, ToolLayoutComponent, IconComponent, ToolHistoryDirective],
   templateUrl: './base64.component.html',
   styleUrl: './base64.component.scss',
 })

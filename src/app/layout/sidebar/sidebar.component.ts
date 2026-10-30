@@ -1,33 +1,36 @@
 import { Component, EventEmitter, Input, Output, computed, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { environment } from '../../../environments/environment';
-import { TOOL_CATEGORIES, getToolBySlug, searchTools } from '../../core/data/tools.registry';
+import { TOOLS, TOOL_CATEGORIES, getToolBySlug } from '../../core/data/tools.registry';
 import { ToolDefinition } from '../../core/models/tool.model';
 import { ToastService } from '../../core/services/toast.service';
 import { UserStorageService } from '../../core/services/user-storage.service';
-import { ThemeService } from '../../core/services/theme.service';
+import { IconComponent } from '../../shared/components/icon/icon.component';
+import { BrandMarkComponent } from '../brand-mark/brand-mark.component';
 
 /** Max items shown in sidebar Bookmarks / Recent (keeps nav short). */
-const SIDEBAR_LIST_LIMIT = 5;
+const SIDEBAR_LIST_LIMIT = 4;
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive, IconComponent, BrandMarkComponent],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss',
 })
 export class SidebarComponent {
   @Input() open = false;
-  @Input() query = '';
-  @Output() navigate = new EventEmitter<void>();
+  @Output() close = new EventEmitter<void>();
 
   private readonly storage = inject(UserStorageService);
   private readonly toast = inject(ToastService);
-  readonly theme = inject(ThemeService);
 
   readonly siteName = environment.siteName;
-  readonly categories = TOOL_CATEGORIES;
+  readonly toolCount = TOOLS.length;
+  readonly groups = [...TOOL_CATEGORIES]
+    .sort((a, b) => a.order - b.order)
+    .map((cat) => ({ cat, tools: TOOLS.filter((t) => t.category === cat.id) }))
+    .filter((g) => g.tools.length);
 
   readonly bookmarkedTools = computed(() =>
     this.storage
@@ -37,28 +40,17 @@ export class SidebarComponent {
       .slice(0, SIDEBAR_LIST_LIMIT)
   );
 
-  readonly recentTools = computed(() =>
-    this.storage
+  readonly recentTools = computed(() => {
+    const marked = new Set(this.storage.bookmarks());
+    return this.storage
       .recentTools()
       .map((e) => getToolBySlug(e.slug))
-      .filter((t): t is ToolDefinition => !!t)
-      .slice(0, SIDEBAR_LIST_LIMIT)
-  );
-
-  get tools(): ToolDefinition[] {
-    return searchTools(this.query);
-  }
-
-  toolsFor(categoryId: string): ToolDefinition[] {
-    return this.tools.filter((t) => t.category === categoryId);
-  }
-
-  onNav(): void {
-    this.navigate.emit();
-  }
+      .filter((t): t is ToolDefinition => !!t && !marked.has(t.slug))
+      .slice(0, SIDEBAR_LIST_LIMIT);
+  });
 
   clearLocal(): void {
     this.storage.clearAllLocalData();
-    this.toast.success('Cleared bookmarks, recent tools, and history');
+    this.toast.success('Cleared bookmarks, recents and history from this browser');
   }
 }

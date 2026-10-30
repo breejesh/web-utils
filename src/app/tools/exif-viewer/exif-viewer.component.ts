@@ -70,6 +70,7 @@ export class ExifViewerComponent {
   error = '';
   fileLabel = '';
   private fileName = 'image';
+  private fileType = '';
 
   async onFile(ev: Event): Promise<void> {
     if (!isPlatformBrowser(this.platformId)) return;
@@ -78,6 +79,8 @@ export class ExifViewerComponent {
     this.error = '';
     this.fileName = file.name.replace(/\.[^.]+$/, '') || 'image';
     this.fileLabel = `${file.name} · ${(file.size / 1024).toFixed(1)} KB`;
+    if (this.src) URL.revokeObjectURL(this.src);
+    this.fileType = file.type;
     this.src = URL.createObjectURL(file);
     try {
       const data = await exifr.parse(file, { iptc: true, xmp: true, icc: false });
@@ -99,8 +102,10 @@ export class ExifViewerComponent {
       const ctx = canvas.getContext('2d');
       if (!ctx) throw new Error('Canvas unavailable');
       ctx.drawImage(img, 0, 0);
-      const url = canvas.toDataURL('image/jpeg', 0.92);
-      downloadDataUrl(`${this.fileName}-stripped.jpg`, url);
+      // Keep PNG/WebP (transparency); everything else becomes a high-quality JPEG.
+      const mime = this.fileType === 'image/png' || this.fileType === 'image/webp' ? this.fileType : 'image/jpeg';
+      const url = canvas.toDataURL(mime, 0.92);
+      downloadDataUrl(`${this.fileName}-stripped.${mime.split('/')[1].replace('jpeg', 'jpg')}`, url);
       this.toast.success('Stripped copy downloaded (re-encoded, metadata removed)');
     } catch (e) {
       this.error = e instanceof Error ? e.message : 'Strip failed';

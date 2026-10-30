@@ -1,0 +1,380 @@
+/* Shared vocabulary every tool template uses: panels, toolbars, options bars, workspaces, stats. */
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding: 0.85rem 0.95rem 0.95rem;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+  min-height: 28px;
+}
+
+.panel-title {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--text-primary);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.panel-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1.1rem;
+  align-items: center;
+  padding: 0.7rem 0.9rem;
+}
+
+.options .field {
+  flex: 0 1 auto;
+}
+
+.check {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  user-select: none;
+  min-height: 28px;
+  transition: color var(--transition);
+
+  &:hover {
+    color: var(--text-primary);
+  }
+
+  input {
+    width: 15px;
+    height: 15px;
+    margin: 0;
+    cursor: pointer;
+  }
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0.85rem;
+  min-width: 0;
+  width: 100%;
+}
+
+/* Dual / multi pane workspace that uses remaining viewport */
+.workspace-fill {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0.85rem;
+  min-height: var(--workspace-height);
+  height: var(--workspace-height);
+  align-items: stretch;
+}
+
+.workspace-fill.cols-1 {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.workspace-fill > .panel,
+.workspace-pane {
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.workspace-fill > .panel > .textarea,
+.workspace-fill > .panel > .scroll-pane,
+.workspace-pane > .textarea,
+.workspace-pane > .scroll-pane {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.error-box {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+  padding: 0.65rem 0.85rem;
+  border-radius: var(--radius-md);
+  border: 1px solid color-mix(in srgb, var(--danger) 35%, var(--border-color));
+  background: var(--danger-opacity);
+  color: var(--danger);
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  overflow-wrap: anywhere;
+  animation: fade-up 0.2s var(--ease);
+}
+
+.hint,
+.note {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+.empty {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 0.6rem;
+}
+
+.stat {
+  padding: 0.8rem 0.9rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background: var(--bg-elevated);
+  box-shadow: var(--inner-highlight);
+  min-width: 0;
+
+  .k {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 0.2rem;
+  }
+
+  .v {
+    color: var(--text-primary);
+    font-size: 1.3rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+}
+
+/* Markdown / rich HTML preview */
+.md-preview,
+.rich-preview {
+  color: var(--text-secondary);
+  line-height: 1.65;
+  font-size: 0.95rem;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+
+  > :first-child {
+    margin-top: 0;
+  }
+
+  :is(h1, h2, h3, h4, h5, h6) {
+    color: var(--text-primary);
+    margin: 1.1rem 0 0.45rem;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+  h2 {
+    font-size: 1.2rem;
+  }
+
+  p,
+  ul,
+  ol {
+    margin: 0.55rem 0;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--radius-sm);
+  }
+
+  table {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    border-collapse: collapse;
+    margin: 0.75rem 0;
+  }
+
+  th,
+  td {
+    border: 1px solid var(--border-color);
+    padding: 0.4rem 0.6rem;
+    text-align: left;
+  }
+
+  th {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+  }
+
+  a {
+    color: var(--accent-color);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    word-break: break-all;
+  }
+
+  code {
+    font-family: var(--font-mono);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    padding: 0.08rem 0.35rem;
+    border-radius: 5px;
+    font-size: 0.86em;
+    overflow-wrap: anywhere;
+  }
+
+  pre {
+    background: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 0.8rem 0.95rem;
+    overflow-x: auto;
+    max-width: 100%;
+  }
+
+  pre code {
+    background: transparent;
+    border: 0;
+    padding: 0;
+    white-space: pre;
+  }
+
+  blockquote {
+    border-left: 3px solid var(--accent-color);
+    margin: 0.75rem 0;
+    padding: 0.1rem 0 0.1rem 0.85rem;
+    color: var(--text-muted);
+  }
+
+  hr {
+    margin: 1.1rem 0;
+  }
+}
+
+@media (max-width: 900px) {
+  .grid-2,
+  .workspace-fill {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .grid-2.workspace-fill,
+  .workspace-fill {
+    height: auto;
+    min-height: 0;
+  }
+
+  .workspace-fill > .panel,
+  .workspace-pane {
+    height: auto;
+    max-height: none;
+    min-height: min(50dvh, 420px);
+  }
+
+  .workspace-fill > .panel > .textarea,
+  .workspace-fill > .panel > .scroll-pane,
+  .workspace-pane > .textarea {
+    min-height: min(42dvh, 360px);
+    height: min(42dvh, 360px);
+  }
+}
+
+.toolbar .spacer {
+  flex: 1;
+}
+
+.toolbar-sep {
+  width: 1px;
+  height: 20px;
+  background: var(--border-color);
+  margin: 0 0.2rem;
+}
+
+/* Segmented control (mode switches) */
+.segmented {
+  display: inline-flex;
+  padding: 3px;
+  gap: 2px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+}
+
+.seg-btn {
+  appearance: none;
+  border: 0;
+  height: 28px;
+  padding: 0 0.85rem;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background var(--transition),
+    color var(--transition),
+    box-shadow var(--transition);
+
+  &:hover:not(.active) {
+    color: var(--text-primary);
+  }
+
+  &.active {
+    color: var(--text-primary);
+    background: var(--bg-raised);
+    box-shadow: var(--shadow-sm), 0 0 0 1px var(--border-strong);
+  }
+}
+
+.file-btn {
+  cursor: pointer;
+}

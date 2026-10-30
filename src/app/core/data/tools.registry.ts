@@ -6,48 +6,56 @@ export const TOOL_CATEGORIES: ToolCategory[] = [
     name: 'Encoding',
     description: 'Base64, URL encoding, and transfer-safe transforms.',
     order: 1,
+    icon: 'arrow-left-right',
   },
   {
     id: 'data',
     name: 'Data formats',
     description: 'JSON, YAML, CSV, SQL, and structured data tools.',
     order: 2,
+    icon: 'braces',
   },
   {
     id: 'dev',
     name: 'Developer',
     description: 'JWT, regex, cron, certificates, EVTX, and debugging helpers.',
     order: 3,
+    icon: 'terminal',
   },
   {
     id: 'generators',
     name: 'Generators',
     description: 'UUIDs, passwords, lorem, and QR codes.',
     order: 4,
+    icon: 'sparkles',
   },
   {
     id: 'text',
     name: 'Text',
     description: 'Diff, case, word count, and markdown.',
     order: 5,
+    icon: 'type',
   },
   {
     id: 'time',
     name: 'Date & time',
     description: 'Timestamps, ages, and date math.',
     order: 6,
+    icon: 'clock',
   },
   {
     id: 'media',
     name: 'Media & color',
     description: 'Images, EXIF, SVG, and color conversion.',
     order: 7,
+    icon: 'image',
   },
   {
     id: 'security',
     name: 'Privacy & security',
     description: 'Hashes, passwords, and offline-safe utilities.',
     order: 8,
+    icon: 'shield',
   },
 ];
 
@@ -58,14 +66,16 @@ export const TOOLS: ToolDefinition[] = [
     shortName: 'Base64',
     description: 'Encode/decode with charset options, live mode, line mode, and file tools.',
     longDescription:
-      'Decode and encode Base64 with character-set selection, live mode, per-line processing, URL-safe variant, and file encode/decode downloads — inspired by base64decode.org, fully local.',
+      'Decode and encode Base64 with character-set selection, live mode, per-line processing, URL-safe variant, and file encode/decode downloads — fully local, nothing is uploaded.',
     seoTitle: 'Base64 Encode Decode Online — Charsets, Files, Live Mode',
     seoDescription:
       'Free Base64 encode and decode online. Charset support, live mode, line-by-line, URL-safe, and file tools. 100% client-side — no upload.',
     keywords: ['base64 encode', 'base64 decode', 'base64 converter', 'file to base64', 'base64url'],
     category: 'encoding',
     component: 'base64',
-    icon: '01',
+    icon: 'binary',
+    primaryField: 'input',
+    related: ['url-encode-decode', 'image-tools', 'jwt-debugger', 'hash-generator'],
     featured: true,
     popular: true,
   },
@@ -82,7 +92,9 @@ export const TOOLS: ToolDefinition[] = [
     keywords: ['url encode', 'url decode', 'percent encoding', 'query string encode'],
     category: 'encoding',
     component: 'url-encode',
-    icon: '02',
+    icon: 'link',
+    primaryField: 'input',
+    related: ['base64-encode-decode', 'json-formatter', 'qr-code-generator'],
     popular: true,
   },
   {
@@ -91,14 +103,16 @@ export const TOOLS: ToolDefinition[] = [
     shortName: 'JSON',
     description: 'Beautify, minify, lint, tree-view, auto-fix, upload/download — private JSON toolkit.',
     longDescription:
-      'Format and validate JSON with indent levels, tree viewer, auto-fix for common mistakes, localStorage notepad, file upload/download, and print — feature-inspired by jsonformatter.org, 100% client-side.',
+      'Format and validate JSON with indent levels, tree viewer, auto-fix for common mistakes, localStorage notepad, file upload/download, and print — 100% client-side.',
     seoTitle: 'JSON Formatter & Validator — Beautify, Lint, Tree View',
     seoDescription:
       'Online JSON formatter, validator, minifier, and tree viewer. Auto-fix, upload/download, local save. Nothing leaves your browser.',
     keywords: ['json formatter', 'json beautify', 'json minify', 'json validator', 'json lint', 'json tree'],
     category: 'data',
     component: 'json-formatter',
-    icon: '03',
+    icon: 'braces',
+    primaryField: 'input',
+    related: ['yaml-json', 'csv-json', 'jwt-debugger', 'text-diff'],
     featured: true,
     popular: true,
   },
@@ -115,7 +129,10 @@ export const TOOLS: ToolDefinition[] = [
     keywords: ['jwt decoder', 'jwt debugger', 'json web token', 'decode jwt'],
     category: 'dev',
     component: 'jwt-debugger',
-    icon: '04',
+    icon: 'key-round',
+    primaryField: 'token',
+    sensitive: true,
+    related: ['base64-encode-decode', 'json-formatter', 'timestamp-converter', 'hash-generator'],
     featured: true,
     popular: true,
   },
@@ -123,32 +140,36 @@ export const TOOLS: ToolDefinition[] = [
     slug: 'uuid-generator',
     name: 'UUID Generator',
     shortName: 'UUID',
-    description: 'Generate UUID v4 and NanoID-style IDs in bulk.',
+    description: 'Generate UUID v4, time-ordered UUID v7 and Nano-style IDs in bulk.',
     longDescription:
-      'Create cryptographically strong UUID v4 identifiers and compact IDs for apps, databases, and testing.',
-    seoTitle: 'UUID Generator Online — UUID v4 & Bulk IDs',
+      'Create cryptographically strong UUID v4 and sortable UUID v7 identifiers, or compact Nano-style IDs, for apps, databases and testing.',
+    seoTitle: 'UUID Generator — v4 & v7 UUIDs in Bulk',
     seoDescription:
-      'Generate UUID v4 and bulk identifiers online. Free, private, client-side UUID generator.',
-    keywords: ['uuid generator', 'uuid v4', 'guid generator', 'nanoid'],
+      'Generate UUID v4 and time-ordered UUID v7 identifiers in bulk. Free, private, cryptographically random, and runs in your browser.',
+    keywords: ['uuid generator', 'uuid v4', 'uuid v7', 'guid generator', 'nanoid'],
     category: 'generators',
     component: 'uuid-generator',
-    icon: '05',
+    icon: 'fingerprint',
+    related: ['password-generator', 'hash-generator', 'lorem-ipsum'],
     popular: true,
   },
   {
     slug: 'hash-generator',
     name: 'Hash Generator',
     shortName: 'Hash',
-    description: 'SHA-1, SHA-256, SHA-512 hashes via Web Crypto — never uploaded.',
+    description: 'MD5, SHA-1, SHA-256 and SHA-512 for text or files, plus checksum verification.',
     longDescription:
-      'Hash text with modern browser cryptography. Useful for checksums, integrity checks, and learning digests.',
-    seoTitle: 'Hash Generator Online — SHA-256, SHA-512 (Client-Side)',
+      'Hash text or files with MD5, SHA-1, SHA-256, SHA-384 and SHA-512 side by side, and verify downloads against a published checksum. Files are read locally, never uploaded.',
+    seoTitle: 'Hash Generator — MD5, SHA-256, SHA-512 for Text & Files',
     seoDescription:
-      'Generate SHA-1, SHA-256, and SHA-512 hashes online. Uses Web Crypto in your browser — private and free.',
-    keywords: ['sha256 hash', 'hash generator', 'sha512', 'checksum online'],
+      'Free MD5, SHA-1, SHA-256 and SHA-512 hash generator for text and files, with checksum verification. Runs in your browser; files are never uploaded.',
+    keywords: ['sha256 hash', 'md5 hash generator', 'hash generator', 'sha512', 'file checksum', 'verify checksum online'],
     category: 'security',
     component: 'hash-generator',
-    icon: '06',
+    icon: 'hash',
+    primaryField: 'input',
+    sensitive: true,
+    related: ['password-generator', 'base64-encode-decode', 'uuid-generator'],
     featured: true,
   },
   {
@@ -164,7 +185,9 @@ export const TOOLS: ToolDefinition[] = [
     keywords: ['text diff', 'compare text', 'diff checker', 'string compare'],
     category: 'text',
     component: 'text-diff',
-    icon: '07',
+    icon: 'diff',
+    primaryField: 'a',
+    related: ['json-formatter', 'word-counter', 'case-converter'],
     popular: true,
   },
   {
@@ -173,14 +196,16 @@ export const TOOLS: ToolDefinition[] = [
     shortName: 'Epoch',
     description: 'Full epoch converter: live clock, s/ms/µs/ns, date parts, periods, code samples.',
     longDescription:
-      'Convert Unix timestamps in seconds, milliseconds, microseconds, and nanoseconds. Live epoch clock, date-part builder, start/end of day/month/year, duration humanizer, and multi-language code examples — inspired by epochconverter.com, fully client-side.',
+      'Convert Unix timestamps in seconds, milliseconds, microseconds, and nanoseconds. Live epoch clock, date-part builder, start/end of day/month/year, duration humanizer, and multi-language code examples — fully client-side.',
     seoTitle: 'Unix Epoch Converter — Timestamp to Date Online (s/ms/µs/ns)',
     seoDescription:
       'Free Unix epoch converter with live clock, auto unit detection, date parts, year/month/day ranges, and code samples. Fully private in your browser.',
     keywords: ['unix timestamp', 'epoch converter', 'timestamp to date', 'epoch time', 'unix time'],
     category: 'time',
     component: 'timestamp-converter',
-    icon: '08',
+    icon: 'clock',
+    primaryField: 'timestamp',
+    related: ['date-calculator', 'cron-explainer', 'jwt-debugger'],
     popular: true,
     featured: true,
   },
@@ -188,10 +213,10 @@ export const TOOLS: ToolDefinition[] = [
     slug: 'regex-tester',
     name: 'Regex Tester',
     shortName: 'Regex',
-    description: 'regex101-style playground: live match, highlight, groups, substitution, and quick reference.',
+    description: 'Live regex playground: match highlighting, capture groups, substitution, and explanations.',
     longDescription:
-      'Build, test, and debug JavaScript regular expressions in the browser — pattern/flags bar, live match highlighting, match information with capture groups, substitution, token explanation, and a quick reference (inspired by regex101.com). Fully client-side.',
-    seoTitle: 'Regex Tester Online — Match, Groups, Substitution (like regex101)',
+      'Build, test, and debug JavaScript regular expressions in the browser — pattern/flags bar, live match highlighting, match information with capture groups, substitution, token explanation, and a quick reference. Fully client-side.',
+    seoTitle: 'Regex Tester Online — Live Match, Groups & Substitution',
     seoDescription:
       'Free client-side regex tester with live highlighting, capture groups, substitution, explanation, and quick reference. JavaScript flavor, no upload.',
     keywords: [
@@ -205,7 +230,9 @@ export const TOOLS: ToolDefinition[] = [
     ],
     category: 'dev',
     component: 'regex-tester',
-    icon: '09',
+    icon: 'regex',
+    primaryField: 'text',
+    related: ['text-diff', 'case-converter', 'word-counter'],
     featured: true,
   },
   {
@@ -221,7 +248,8 @@ export const TOOLS: ToolDefinition[] = [
     keywords: ['hex to rgb', 'color converter', 'hsl converter', 'contrast checker'],
     category: 'media',
     component: 'color-converter',
-    icon: '10',
+    icon: 'palette',
+    related: ['svg-optimizer', 'image-tools', 'qr-code-generator'],
   },
   {
     slug: 'unit-converter',
@@ -236,7 +264,8 @@ export const TOOLS: ToolDefinition[] = [
     keywords: ['unit converter', 'length converter', 'mb to gb', 'celsius fahrenheit'],
     category: 'data',
     component: 'unit-converter',
-    icon: '11',
+    icon: 'ruler',
+    related: ['percentage-calculator', 'date-calculator', 'color-converter'],
   },
   {
     slug: 'percentage-calculator',
@@ -251,7 +280,8 @@ export const TOOLS: ToolDefinition[] = [
     keywords: ['percentage calculator', 'discount calculator', 'percent of', 'tip calculator'],
     category: 'data',
     component: 'percentage-calculator',
-    icon: '12',
+    icon: 'percent',
+    related: ['unit-converter', 'date-calculator'],
   },
   {
     slug: 'word-counter',
@@ -266,7 +296,9 @@ export const TOOLS: ToolDefinition[] = [
     keywords: ['word counter', 'character counter', 'reading time'],
     category: 'text',
     component: 'word-counter',
-    icon: '13',
+    icon: 'whole-word',
+    primaryField: 'text',
+    related: ['case-converter', 'markdown-preview', 'text-diff', 'lorem-ipsum'],
     popular: true,
   },
   {
@@ -282,7 +314,9 @@ export const TOOLS: ToolDefinition[] = [
     keywords: ['case converter', 'camelcase', 'snake case', 'kebab case'],
     category: 'text',
     component: 'case-converter',
-    icon: '14',
+    icon: 'case-sensitive',
+    primaryField: 'input',
+    related: ['word-counter', 'url-encode-decode', 'regex-tester'],
   },
   {
     slug: 'lorem-ipsum',
@@ -297,7 +331,8 @@ export const TOOLS: ToolDefinition[] = [
     keywords: ['lorem ipsum', 'placeholder text', 'dummy text generator'],
     category: 'generators',
     component: 'lorem-ipsum',
-    icon: '15',
+    icon: 'pilcrow',
+    related: ['word-counter', 'markdown-preview', 'uuid-generator'],
   },
   {
     slug: 'qr-code-generator',
@@ -312,7 +347,9 @@ export const TOOLS: ToolDefinition[] = [
     keywords: ['qr code generator', 'create qr code', 'qr to png'],
     category: 'generators',
     component: 'qr-code',
-    icon: '16',
+    icon: 'qr-code',
+    primaryField: 'text',
+    related: ['url-encode-decode', 'image-tools', 'password-generator'],
     popular: true,
   },
   {
@@ -328,7 +365,8 @@ export const TOOLS: ToolDefinition[] = [
     keywords: ['image to base64', 'resize image', 'compress image online'],
     category: 'media',
     component: 'image-tools',
-    icon: '17',
+    icon: 'image',
+    related: ['exif-viewer', 'base64-encode-decode', 'svg-optimizer'],
   },
   {
     slug: 'csv-json',
@@ -343,7 +381,9 @@ export const TOOLS: ToolDefinition[] = [
     keywords: ['csv to json', 'json to csv', 'csv converter'],
     category: 'data',
     component: 'csv-json',
-    icon: '18',
+    icon: 'sheet',
+    primaryField: 'csv',
+    related: ['json-formatter', 'yaml-json', 'sql-formatter'],
   },
   {
     slug: 'password-generator',
@@ -351,14 +391,16 @@ export const TOOLS: ToolDefinition[] = [
     shortName: 'Password',
     description: 'Strong random passwords offline with customizable rules.',
     longDescription:
-      'Generate high-entropy passwords with length and character-class controls. Crypto-strong randomness when available.',
+      'Generate high-entropy passwords with length and character-class controls, using unbiased cryptographic randomness. Nothing is stored or sent anywhere.',
     seoTitle: 'Password Generator Online — Strong & Offline',
     seoDescription:
       'Generate strong random passwords offline in your browser. Customize length and character sets. Private by design.',
     keywords: ['password generator', 'strong password', 'random password'],
     category: 'security',
     component: 'password-generator',
-    icon: '19',
+    icon: 'rectangle-ellipsis',
+    sensitive: true,
+    related: ['hash-generator', 'uuid-generator', 'qr-code-generator'],
     featured: true,
   },
   {
@@ -374,7 +416,8 @@ export const TOOLS: ToolDefinition[] = [
     keywords: ['date calculator', 'age calculator', 'days between dates'],
     category: 'time',
     component: 'date-calculator',
-    icon: '20',
+    icon: 'calendar-days',
+    related: ['timestamp-converter', 'cron-explainer', 'percentage-calculator'],
   },
   {
     slug: 'markdown-preview',
@@ -389,7 +432,9 @@ export const TOOLS: ToolDefinition[] = [
     keywords: ['markdown preview', 'markdown editor', 'markdown to html'],
     category: 'text',
     component: 'markdown-preview',
-    icon: '21',
+    icon: 'heading',
+    primaryField: 'md',
+    related: ['word-counter', 'text-diff', 'lorem-ipsum'],
   },
   {
     slug: 'svg-optimizer',
@@ -404,7 +449,9 @@ export const TOOLS: ToolDefinition[] = [
     keywords: ['svg optimizer', 'svg minifier', 'compress svg'],
     category: 'media',
     component: 'svg-optimizer',
-    icon: '22',
+    icon: 'shapes',
+    primaryField: 'input',
+    related: ['image-tools', 'color-converter', 'base64-encode-decode'],
   },
   {
     slug: 'cron-explainer',
@@ -419,7 +466,9 @@ export const TOOLS: ToolDefinition[] = [
     keywords: ['cron explainer', 'cron expression', 'crontab generator'],
     category: 'dev',
     component: 'cron-explainer',
-    icon: '23',
+    icon: 'calendar-clock',
+    primaryField: 'cron',
+    related: ['timestamp-converter', 'date-calculator', 'regex-tester'],
   },
   {
     slug: 'sql-formatter',
@@ -434,7 +483,9 @@ export const TOOLS: ToolDefinition[] = [
     keywords: ['sql formatter', 'beautify sql', 'sql pretty print'],
     category: 'data',
     component: 'sql-formatter',
-    icon: '24',
+    icon: 'database',
+    primaryField: 'input',
+    related: ['json-formatter', 'csv-json', 'text-diff'],
   },
   {
     slug: 'yaml-json',
@@ -449,22 +500,27 @@ export const TOOLS: ToolDefinition[] = [
     keywords: ['yaml to json', 'json to yaml', 'yaml converter'],
     category: 'data',
     component: 'yaml-json',
-    icon: '25',
+    icon: 'list-tree',
+    primaryField: 'yaml',
+    related: ['json-formatter', 'csv-json', 'text-diff'],
   },
   {
     slug: 'certificate-inspector',
     name: 'Certificate Inspector',
-    shortName: 'Cert/PEM',
-    description: 'Inspect PEM certificates and decode basic fields locally.',
+    shortName: 'Certificate',
+    description: 'Decode X.509 PEM certificates: subject, issuer, validity, SANs, key and fingerprints.',
     longDescription:
-      'Paste a PEM certificate to view structure notes and decoded text sections. Educational inspection only.',
-    seoTitle: 'PEM Certificate Inspector Online',
+      'Paste a PEM certificate or full chain to decode the subject, issuer, validity window, Subject Alternative Names, key algorithm and size, serial number and SHA-256 fingerprint, all parsed locally.',
+    seoTitle: 'Certificate Decoder — Inspect X.509 PEM Certificates Online',
     seoDescription:
-      'Inspect PEM certificates in your browser. Decode structure locally — no upload required.',
-    keywords: ['pem inspector', 'certificate decoder', 'x509 online'],
+      'Decode SSL/TLS X.509 certificates in your browser: subject, issuer, expiry, SANs, key size and fingerprints. Private and free, with no upload.',
+    keywords: ['certificate decoder', 'ssl certificate checker', 'pem decoder', 'x509 parser', 'certificate expiry'],
     category: 'dev',
     component: 'certificate-inspector',
-    icon: '26',
+    icon: 'badge-check',
+    primaryField: 'pem',
+    sensitive: true,
+    related: ['base64-encode-decode', 'hash-generator', 'jwt-debugger'],
   },
   {
     slug: 'exif-viewer',
@@ -479,7 +535,8 @@ export const TOOLS: ToolDefinition[] = [
     keywords: ['exif viewer', 'remove exif', 'image metadata', 'strip gps'],
     category: 'media',
     component: 'exif-viewer',
-    icon: '27',
+    icon: 'camera',
+    related: ['image-tools', 'evtx-viewer'],
   },
   {
     slug: 'evtx-viewer',
@@ -494,7 +551,8 @@ export const TOOLS: ToolDefinition[] = [
     keywords: ['evtx viewer', 'windows event log', 'evtx parser', 'event viewer online', 'security log'],
     category: 'dev',
     component: 'evtx-viewer',
-    icon: '28',
+    icon: 'scroll-text',
+    related: ['exif-viewer', 'timestamp-converter', 'regex-tester'],
     featured: true,
   },
 ];
@@ -511,11 +569,56 @@ export function getCategory(id: string): ToolCategory | undefined {
   return TOOL_CATEGORIES.find((c) => c.id === id);
 }
 
+export function getRelatedTools(tool: ToolDefinition, limit = 4): ToolDefinition[] {
+  const explicit = (tool.related || []).map(getToolBySlug).filter((t): t is ToolDefinition => !!t);
+  const sameCategory = TOOLS.filter((t) => t.category === tool.category && t.slug !== tool.slug);
+  const seen = new Set<string>();
+  return [...explicit, ...sameCategory]
+    .filter((t) => (seen.has(t.slug) ? false : (seen.add(t.slug), true)))
+    .slice(0, limit);
+}
+
+/** Subsequence match score (higher is better), 0 when `q` is not a subsequence of `text`. */
+function fuzzyScore(text: string, q: string): number {
+  let ti = 0;
+  let score = 0;
+  let streak = 0;
+  for (const ch of q) {
+    const found = text.indexOf(ch, ti);
+    if (found < 0) return 0;
+    streak = found === ti ? streak + 1 : 0;
+    const wordStart = found === 0 || /[\s\-_/&]/.test(text[found - 1]);
+    score += 1 + streak * 2 + (wordStart ? 3 : 0);
+    ti = found + 1;
+  }
+  return score;
+}
+
+function scoreTool(t: ToolDefinition, q: string): number {
+  const name = t.name.toLowerCase();
+  const short = t.shortName.toLowerCase();
+  if (short === q || name === q) return 1000;
+  if (short.startsWith(q) || name.startsWith(q)) return 800;
+  if (name.split(/[\s&↔/-]+/).some((w) => w.startsWith(q))) return 650;
+  if (t.keywords.some((k) => k.startsWith(q))) return 500;
+  if (name.includes(q) || short.includes(q) || t.slug.includes(q)) return 420;
+  if (t.keywords.some((k) => k.includes(q))) return 320;
+  if (t.description.toLowerCase().includes(q)) return 200;
+  const fuzzy = Math.max(fuzzyScore(name, q), fuzzyScore(short, q));
+  return fuzzy >= q.length * 2 ? 50 + fuzzy : 0;
+}
+
+/** Ranked search across names, keywords and descriptions with typo-tolerant fallback. */
 export function searchTools(query: string): ToolDefinition[] {
   const q = query.trim().toLowerCase();
   if (!q) return TOOLS;
-  return TOOLS.filter((t) => {
-    const hay = [t.name, t.shortName, t.description, t.slug, ...t.keywords].join(' ').toLowerCase();
-    return hay.includes(q);
-  });
+  const terms = q.split(/\s+/);
+  return TOOLS.map((t) => {
+    const scores = terms.map((term) => scoreTool(t, term));
+    const total = scores.every((sc) => sc > 0) ? scores.reduce((a, b) => a + b, 0) : 0;
+    return { t, total };
+  })
+    .filter((r) => r.total > 0)
+    .sort((a, b) => b.total - a.total)
+    .map((r) => r.t);
 }

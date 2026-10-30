@@ -2,6 +2,7 @@ import { Component, Input, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ToolDefinition } from '../../core/models/tool.model';
 import { ClipboardService } from '../../core/services/clipboard.service';
+import { IconComponent } from '../../shared/components/icon/icon.component';
 import { ToolLayoutComponent } from '../../shared/components/tool-layout/tool-layout.component';
 
 const WORDS = (
@@ -13,7 +14,7 @@ const WORDS = (
 @Component({
   selector: 'app-lorem-ipsum',
   standalone: true,
-  imports: [FormsModule, ToolLayoutComponent],
+  imports: [FormsModule, ToolLayoutComponent, IconComponent],
   template: `
     <app-tool-layout [tool]="tool">
       <div class="options surface">
@@ -33,7 +34,7 @@ const WORDS = (
       </div>
       <div class="toolbar">
         <button type="button" class="btn btn-primary" (click)="generate()">Generate</button>
-        <button type="button" class="btn btn-ghost" (click)="clip.copy(output)" [disabled]="!output">Copy</button>
+        <button type="button" class="btn btn-ghost" (click)="clip.copy(output)" [disabled]="!output"><svg appIcon="copy"></svg> Copy</button>
       </div>
       <div class="panel surface">
         <textarea class="textarea" [(ngModel)]="output" rows="14"></textarea>

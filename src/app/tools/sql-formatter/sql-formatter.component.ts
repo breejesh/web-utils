@@ -3,13 +3,14 @@ import { FormsModule } from '@angular/forms';
 import { format } from 'sql-formatter';
 import { ToolDefinition } from '../../core/models/tool.model';
 import { ClipboardService } from '../../core/services/clipboard.service';
+import { IconComponent } from '../../shared/components/icon/icon.component';
 import { ToolLayoutComponent } from '../../shared/components/tool-layout/tool-layout.component';
 import { ToolHistoryDirective } from '../../shared/directives/tool-history.directive';
 
 @Component({
   selector: 'app-sql-formatter',
   standalone: true,
-  imports: [FormsModule, ToolLayoutComponent, ToolHistoryDirective],
+  imports: [FormsModule, ToolLayoutComponent, IconComponent, ToolHistoryDirective],
   template: `
     <app-tool-layout [tool]="tool">
       <div class="options surface">
@@ -26,9 +27,9 @@ import { ToolHistoryDirective } from '../../shared/directives/tool-history.direc
       </div>
       <div class="toolbar">
         <button type="button" class="btn btn-primary" (click)="run()">Format</button>
-        <button type="button" class="btn btn-ghost" (click)="sample()">Sample</button>
-        <button type="button" class="btn btn-ghost" (click)="clip.copy(output)" [disabled]="!output">Copy</button>
-        <button type="button" class="btn btn-danger" (click)="clear()">Clear</button>
+        <button type="button" class="btn btn-quiet" (click)="sample()"><svg appIcon="sparkles"></svg> Sample</button>
+        <button type="button" class="btn btn-ghost" (click)="clip.copy(output)" [disabled]="!output"><svg appIcon="copy"></svg> Copy</button>
+        <button type="button" class="btn btn-quiet" (click)="clear()"><svg appIcon="trash"></svg> Clear</button>
       </div>
       @if (error) { <div class="error-box">{{ error }}</div> }
       <div class="workspace-fill grid-2">

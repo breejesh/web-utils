@@ -1,3 +1,5 @@
+import type { IconName } from '../../shared/icons';
+
 export type ToolCategoryId =
   | 'encoding'
   | 'data'
@@ -13,6 +15,7 @@ export interface ToolCategory {
   name: string;
   description: string;
   order: number;
+  icon: IconName;
 }
 
 export type ToolComponentKey =
@@ -56,7 +59,24 @@ export interface ToolDefinition {
   keywords: string[];
   category: ToolCategoryId;
   component: ToolComponentKey;
-  icon: string;
+  icon: IconName;
   featured?: boolean;
   popular?: boolean;
+  /** History field that receives smart-paste and share-link input. Omit if the tool takes no text input. */
+  primaryField?: string;
+  /** Inputs are likely secrets: local history is off by default. */
+  sensitive?: boolean;
+  /** Slugs of closely related tools (internal links + "next step" suggestions). */
+  related?: string[];
+}
+
+export interface ToolFaq {
+  q: string;
+  a: string;
+}
+
+export interface ToolContent {
+  /** Visible "how to" steps rendered under the tool. */
+  steps: string[];
+  faqs: ToolFaq[];
 }

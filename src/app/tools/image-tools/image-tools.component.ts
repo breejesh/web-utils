@@ -4,13 +4,14 @@ import { FormsModule } from '@angular/forms';
 import { ToolDefinition } from '../../core/models/tool.model';
 import { ClipboardService } from '../../core/services/clipboard.service';
 import { ToastService } from '../../core/services/toast.service';
+import { IconComponent } from '../../shared/components/icon/icon.component';
 import { ToolLayoutComponent } from '../../shared/components/tool-layout/tool-layout.component';
 import { downloadDataUrl } from '../../shared/utils/download';
 
 @Component({
   selector: 'app-image-tools',
   standalone: true,
-  imports: [FormsModule, ToolLayoutComponent],
+  imports: [FormsModule, ToolLayoutComponent, IconComponent],
   template: `
     <app-tool-layout [tool]="tool">
       <div class="options surface">
@@ -38,7 +39,7 @@ import { downloadDataUrl } from '../../shared/utils/download';
         </label>
         <button type="button" class="btn btn-ghost" (click)="process()" [disabled]="!src">Process</button>
         <button type="button" class="btn btn-ghost" (click)="clip.copy(base64)" [disabled]="!base64">Copy Base64</button>
-        <button type="button" class="btn btn-ghost" (click)="download()" [disabled]="!outUrl">Download</button>
+        <button type="button" class="btn btn-ghost" (click)="download()" [disabled]="!outUrl"><svg appIcon="arrow-down"></svg> Download</button>
       </div>
       @if (error) { <div class="error-box">{{ error }}</div> }
       <div class="grid-2">

@@ -84,7 +84,7 @@
   <section class="panel surface">
     <div class="panel-head">
       <h3 class="panel-title">Date string → timestamp</h3>
-      <button type="button" class="btn btn-ghost btn-sm" (click)="clip.copy(dateResultLines.join('\n'))" [disabled]="!dateResultLines.length">Copy</button>
+      <button type="button" class="btn btn-ghost btn-sm" (click)="clip.copy(dateResultLines.join('\n'))" [disabled]="!dateResultLines.length"><svg appIcon="copy"></svg> Copy</button>
     </div>
     <p class="hint">Input formats: RFC 2822, ISO 8601, D-M-Y, M/D/Y, Y-M-D, and browser-local parsing.</p>
     <label class="field">
@@ -157,10 +157,10 @@
         <div class="code-card">
           <div class="lang mono">{{ s.lang }}</div>
           <div class="line"><span class="tag">now</span> <code>{{ s.now }}</code>
-            <button type="button" class="btn btn-ghost btn-sm" (click)="clip.copy(s.now)">Copy</button>
+            <button type="button" class="btn btn-ghost btn-sm" (click)="clip.copy(s.now)"><svg appIcon="copy"></svg> Copy</button>
           </div>
           <div class="line"><span class="tag">from</span> <code>{{ snippet(s.from) }}</code>
-            <button type="button" class="btn btn-ghost btn-sm" (click)="clip.copy(snippet(s.from))">Copy</button>
+            <button type="button" class="btn btn-ghost btn-sm" (click)="clip.copy(snippet(s.from))"><svg appIcon="copy"></svg> Copy</button>
           </div>
         </div>
       }

@@ -1,17 +1,17 @@
 <app-tool-layout [tool]="tool">
   <div class="rx-topbar">
     <div class="flavor chip chip-accent mono">{{ flavorLabel }}</div>
-    <div class="tabs" role="tablist">
-      <button type="button" class="tab" role="tab" [class.on]="tab === 'match'" (click)="setTab('match')">Match</button>
-      <button type="button" class="tab" role="tab" [class.on]="tab === 'substitution'" (click)="setTab('substitution')">
+    <div class="segmented" role="tablist">
+      <button type="button" class="seg-btn" role="tab" [class.active]="tab === 'match'" [attr.aria-selected]="tab === 'match'" (click)="setTab('match')">Match</button>
+      <button type="button" class="seg-btn" role="tab" [class.active]="tab === 'substitution'" [attr.aria-selected]="tab === 'substitution'" (click)="setTab('substitution')">
         Substitution
       </button>
     </div>
     <div class="top-actions">
-      <button type="button" class="btn btn-ghost btn-sm" (click)="sample()">Sample</button>
-      <button type="button" class="btn btn-ghost btn-sm" (click)="copyPattern()">Copy regex</button>
-      <button type="button" class="btn btn-ghost btn-sm" (click)="copyMatches()" [disabled]="!matches.length">Export matches</button>
-      <button type="button" class="btn btn-danger btn-sm" (click)="clearAll()">Clear</button>
+      <button type="button" class="btn btn-quiet btn-sm" (click)="sample()"><svg appIcon="sparkles"></svg> Sample</button>
+      <button type="button" class="btn btn-ghost btn-sm" (click)="copyPattern()"><svg appIcon="copy"></svg> Copy regex</button>
+      <button type="button" class="btn btn-ghost btn-sm" (click)="copyMatches()" [disabled]="!matches.length"><svg appIcon="arrow-down"></svg> Export matches</button>
+      <button type="button" class="btn btn-quiet btn-sm" (click)="clearAll()"><svg appIcon="trash"></svg> Clear</button>
     </div>
   </div>
 

@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ToolDefinition } from '../../core/models/tool.model';
 import { ClipboardService } from '../../core/services/clipboard.service';
 import { ToastService } from '../../core/services/toast.service';
+import { IconComponent } from '../../shared/components/icon/icon.component';
 import { ToolLayoutComponent } from '../../shared/components/tool-layout/tool-layout.component';
 import { EvtxEvent, EvtxParseResult, parseEvtx } from '../../shared/utils/evtx-parser';
 import { downloadText } from '../../shared/utils/download';
@@ -11,7 +12,7 @@ import { downloadText } from '../../shared/utils/download';
 @Component({
   selector: 'app-evtx-viewer',
   standalone: true,
-  imports: [FormsModule, ToolLayoutComponent],
+  imports: [FormsModule, ToolLayoutComponent, IconComponent],
   templateUrl: './evtx-viewer.component.html',
   styleUrl: './evtx-viewer.component.scss',
 })

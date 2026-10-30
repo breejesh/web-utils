@@ -1,21 +1,16 @@
+<a class="skip-link" href="#main">Skip to content</a>
+
 <div class="shell">
-  <app-sidebar
-    [open]="sidebarOpen"
-    [query]="searchQuery"
-    (navigate)="closeSidebar()"
-  />
+  <app-sidebar [open]="sidebarOpen()" (close)="sidebarOpen.set(false)" />
 
   <div class="main-column">
-    <app-header
-      (searchChange)="onSearch($event)"
-      (menuToggle)="toggleSidebar()"
-    />
+    <app-header (menuToggle)="toggleSidebar()" [menuOpen]="sidebarOpen()" />
 
-    <div class="content">
-      <main class="main">
-        <router-outlet />
-      </main>
-      <app-footer />
-    </div>
+    <main class="main" id="main" tabindex="-1">
+      <router-outlet />
+    </main>
+    <app-footer />
   </div>
 </div>
+
+<app-command-palette />

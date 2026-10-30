@@ -21,7 +21,7 @@
     </label>
     <button type="button" class="btn btn-ghost" (click)="exportJson()" [disabled]="!result?.events?.length">Export JSON</button>
     <button type="button" class="btn btn-ghost" (click)="exportCsv()" [disabled]="!result?.events?.length">Export CSV</button>
-    <button type="button" class="btn btn-danger" (click)="clear()">Clear</button>
+    <button type="button" class="btn btn-quiet" (click)="clear()"><svg appIcon="trash"></svg> Clear</button>
   </div>
 
   @if (loading) {

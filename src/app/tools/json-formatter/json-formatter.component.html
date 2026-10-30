@@ -17,20 +17,20 @@
 
   <div class="toolbar">
     <button type="button" class="btn btn-primary" (click)="format()">Format / Beautify</button>
-    <button type="button" class="btn btn-primary" (click)="minify()">Minify</button>
+    <button type="button" class="btn btn-ghost" (click)="minify()">Minify</button>
     <button type="button" class="btn btn-ghost" (click)="validateOnly()">Validate (JSON Lint)</button>
     <button type="button" class="btn btn-ghost" (click)="fixJson()" title="Fix trailing commas, unquoted keys, single quotes">Auto-fix</button>
     <label class="btn btn-ghost file-btn">Upload<input type="file" accept=".json,application/json,text/plain" hidden (change)="loadFile($event)" /></label>
-    <button type="button" class="btn btn-ghost" (click)="download()" [disabled]="!output">Download</button>
+    <button type="button" class="btn btn-ghost" (click)="download()" [disabled]="!output"><svg appIcon="arrow-down"></svg> Download</button>
     <button type="button" class="btn btn-ghost" (click)="printJson()" [disabled]="!output && !input">Print</button>
-    <button type="button" class="btn btn-ghost" (click)="sample()">Sample</button>
-    <button type="button" class="btn btn-danger" (click)="clear()">Clear</button>
+    <button type="button" class="btn btn-quiet" (click)="sample()"><svg appIcon="sparkles"></svg> Sample</button>
+    <button type="button" class="btn btn-quiet" (click)="clear()"><svg appIcon="trash"></svg> Clear</button>
   </div>
 
   @if (error) {
     <div class="error-box">
       {{ error }}
-      @if (errorLine) { <span> · near line {{ errorLine }}</span> }
+      @if (errorLine) { <span> · line {{ errorLine }}{{ errorColumn ? ', column ' + errorColumn : '' }}</span> }
     </div>
   }
   @if (ok) {
@@ -48,7 +48,7 @@
     <div class="panel surface workspace-pane">
       <div class="panel-head">
         <h3 class="panel-title">Input</h3>
-        <button type="button" class="btn btn-ghost btn-sm" (click)="clip.copy(input)">Copy</button>
+        <button type="button" class="btn btn-ghost btn-sm" (click)="clip.copy(input)"><svg appIcon="copy"></svg> Copy</button>
       </div>
       <textarea
         class="textarea fill"
@@ -62,7 +62,7 @@
     <div class="panel surface workspace-pane">
       <div class="panel-head">
         <h3 class="panel-title">{{ view === 'tree' ? 'Tree viewer' : 'Formatted output' }}</h3>
-        <button type="button" class="btn btn-ghost btn-sm" (click)="clip.copy(output)" [disabled]="!output">Copy</button>
+        <button type="button" class="btn btn-ghost btn-sm" (click)="clip.copy(output)" [disabled]="!output"><svg appIcon="copy"></svg> Copy</button>
       </div>
       @if (view === 'text') {
         <textarea class="textarea fill" [(ngModel)]="output" placeholder="Formatted JSON…" spellcheck="false"></textarea>

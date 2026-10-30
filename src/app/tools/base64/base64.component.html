@@ -15,38 +15,22 @@
   </div>
 
   <div class="toolbar">
-    <div class="mode-toggle" role="radiogroup" aria-label="Encode or decode">
-      <button
-        type="button"
-        class="mode-btn"
-        role="radio"
-        [attr.aria-checked]="mode === 'encode'"
-        [class.active]="mode === 'encode'"
-        (click)="setMode('encode')"
-      >
-        Encode
-      </button>
-      <button
-        type="button"
-        class="mode-btn"
-        role="radio"
-        [attr.aria-checked]="mode === 'decode'"
-        [class.active]="mode === 'decode'"
-        (click)="setMode('decode')"
-      >
-        Decode
-      </button>
+    <div class="segmented" role="radiogroup" aria-label="Encode or decode">
+      <button type="button" class="seg-btn" role="radio" [attr.aria-checked]="mode === 'encode'" [class.active]="mode === 'encode'" (click)="setMode('encode')">Encode</button>
+      <button type="button" class="seg-btn" role="radio" [attr.aria-checked]="mode === 'decode'" [class.active]="mode === 'decode'" (click)="setMode('decode')">Decode</button>
     </div>
-    <button type="button" class="btn btn-primary" (click)="run()">
-      {{ mode === 'encode' ? 'Encode now' : 'Decode now' }}
-    </button>
-    <button type="button" class="btn btn-ghost" (click)="swap()">Swap</button>
-    <button type="button" class="btn btn-ghost" (click)="sample()">Sample (Hobbes quote)</button>
-    <label class="btn btn-ghost file-btn">Encode file<input type="file" hidden (change)="onEncodeFile($event)" /></label>
-    <label class="btn btn-ghost file-btn">Decode file (.b64)<input type="file" accept=".txt,.b64,.base64,text/plain" hidden (change)="onDecodeFile($event)" /></label>
-    <button type="button" class="btn btn-ghost" (click)="downloadDecodedBinary()">Download binary</button>
-    <button type="button" class="btn btn-ghost" (click)="downloadTextOut()" [disabled]="!output">Download text</button>
-    <button type="button" class="btn btn-danger" (click)="clear()">Clear</button>
+    @if (!liveMode) {
+      <button type="button" class="btn btn-primary" (click)="run()">{{ mode === 'encode' ? 'Encode' : 'Decode' }}</button>
+    }
+    <button type="button" class="btn btn-ghost" (click)="swap()" title="Move output to input and flip mode"><svg appIcon="arrow-left-right"></svg> Swap</button>
+    <button type="button" class="btn btn-quiet" (click)="sample()">Sample</button>
+    <span class="spacer"></span>
+    <label class="btn btn-quiet btn-sm file-btn"><svg appIcon="arrow-up"></svg> Encode file<input type="file" hidden (change)="onEncodeFile($event)" /></label>
+    <label class="btn btn-quiet btn-sm file-btn"><svg appIcon="arrow-up"></svg> Decode .b64 file<input type="file" accept=".txt,.b64,.base64,text/plain" hidden (change)="onDecodeFile($event)" /></label>
+    <button type="button" class="btn btn-quiet btn-sm" (click)="downloadDecodedBinary()"><svg appIcon="arrow-down"></svg> Binary</button>
+    <button type="button" class="btn btn-quiet btn-sm" (click)="downloadTextOut()" [disabled]="!output"><svg appIcon="arrow-down"></svg> Text</button>
+    <span class="toolbar-sep"></span>
+    <button type="button" class="btn btn-quiet btn-sm" (click)="clear()"><svg appIcon="trash"></svg> Clear</button>
   </div>
 
   @if (fileInfo) {
@@ -62,7 +46,7 @@
         <h3 class="panel-title">{{ mode === 'decode' ? 'Base64 input' : 'Plain text / binary data-URL' }}</h3>
         <div class="panel-actions">
           <span class="meta-row">{{ input.length }} chars</span>
-          <button type="button" class="btn btn-ghost btn-sm" (click)="clip.copy(input)">Copy</button>
+          <button type="button" class="btn btn-ghost btn-sm" (click)="clip.copy(input)"><svg appIcon="copy"></svg> Copy</button>
         </div>
       </div>
       <textarea
@@ -80,7 +64,7 @@
         <h3 class="panel-title">Output</h3>
         <div class="panel-actions">
           <span class="meta-row">{{ output.length }} chars</span>
-          <button type="button" class="btn btn-ghost btn-sm" (click)="clip.copy(output)" [disabled]="!output">Copy</button>
+          <button type="button" class="btn btn-ghost btn-sm" (click)="clip.copy(output)" [disabled]="!output"><svg appIcon="copy"></svg> Copy</button>
         </div>
       </div>
       <textarea
@@ -93,15 +77,4 @@
     </div>
   </div>
 
-  <section class="panel surface about-b64">
-    <h3 class="panel-title">How Base64 works (quick)</h3>
-    <p class="hint">
-      Base64 maps every 3 bytes of binary data to 4 ASCII characters using A–Z, a–z, 0–9, <code>+</code>, and <code>/</code>
-      (or <code>-</code>/<code>_</code> for URL-safe). Padding uses <code>=</code>. Everything here runs in your browser —
-      nothing is uploaded.
-    </p>
-    <p class="hint mono sample-line">
-      “Man” → TWFu · Example: TWFuIGlzIGRpc3Rpbmd1aXNoZWQsIG5vdCBvbmx5IGJ5IGhpcyByZWFzb24sIGJ1dCAuLi4=
-    </p>
-  </section>
 </app-tool-layout>

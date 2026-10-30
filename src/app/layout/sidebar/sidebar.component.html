@@ -1,86 +1,71 @@
-<aside class="sidebar" [class.open]="open" aria-label="Tools navigation">
+<aside class="sidebar" [class.open]="open" aria-label="Tools navigation" id="sidebar">
   <div class="brand-block">
-    <a routerLink="/" class="brand" (click)="onNav()">
-      <img
-        [src]="theme.theme() === 'light' ? 'logo-light.svg' : 'logo-dark.svg'"
-        alt="Web Utils Logo"
-        class="brand-logo"
-        width="34"
-        height="34" />
-      <span class="brand-text">
-        <span class="brand-name">{{ siteName }}</span>
-        <span class="brand-sub mono">utils.breejeshrathod.com</span>
-      </span>
+    <a routerLink="/" class="brand" [attr.aria-label]="siteName + ' home'">
+      <app-brand-mark />
+      <span class="brand-name">{{ siteName }}</span>
     </a>
-  </div>
-
-  <div class="sidebar-head">
-    <span class="mono label">All tools</span>
-    <span class="count chip">{{ tools.length }}</span>
+    <button type="button" class="btn btn-quiet btn-icon btn-sm close-btn" (click)="close.emit()" aria-label="Close menu">
+      <svg appIcon="x" [size]="16"></svg>
+    </button>
   </div>
 
   <nav class="nav">
-    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link home" (click)="onNav()">
-      <span class="idx mono">//</span>
-      <span>Home</span>
+    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link">
+      <svg appIcon="sparkles" [size]="16"></svg>
+      <span class="name">All tools</span>
+      <span class="count mono">{{ toolCount }}</span>
     </a>
 
-    @if (bookmarkedTools().length && !query) {
-      <div class="cat">
-        <div class="cat-title mono">★ Bookmarks</div>
+    @if (bookmarkedTools().length) {
+      <div class="group">
+        <div class="group-title">Bookmarks</div>
         @for (tool of bookmarkedTools(); track tool.slug) {
-          <a class="nav-link quiet" [routerLink]="['/tools', tool.slug]" (click)="onNav()">
-            <span class="idx mono">{{ tool.icon }}</span>
+          <a class="nav-link" [routerLink]="['/tools', tool.slug]" routerLinkActive="active">
+            <svg [appIcon]="tool.icon" [size]="16"></svg>
             <span class="name">{{ tool.shortName }}</span>
+            <svg appIcon="star" [size]="12" class="star"></svg>
           </a>
         }
       </div>
     }
 
-    @if (recentTools().length && !query) {
-      <div class="cat">
-        <div class="cat-title mono">Recent</div>
+    @if (recentTools().length) {
+      <div class="group">
+        <div class="group-title">Recent</div>
         @for (tool of recentTools(); track tool.slug) {
-          <a class="nav-link quiet" [routerLink]="['/tools', tool.slug]" (click)="onNav()">
-            <span class="idx mono">{{ tool.icon }}</span>
+          <a class="nav-link" [routerLink]="['/tools', tool.slug]" routerLinkActive="active">
+            <svg [appIcon]="tool.icon" [size]="16"></svg>
             <span class="name">{{ tool.shortName }}</span>
           </a>
         }
       </div>
     }
 
-    @for (cat of categories; track cat.id) {
-      @if (toolsFor(cat.id).length) {
-        <div class="cat">
-          <div class="cat-title mono">{{ cat.name }}</div>
-          @for (tool of toolsFor(cat.id); track tool.slug) {
-            <a
-              class="nav-link"
-              [routerLink]="['/tools', tool.slug]"
-              routerLinkActive="active"
-              (click)="onNav()"
-            >
-              <span class="idx mono">{{ tool.icon }}</span>
-              <span class="name">{{ tool.shortName }}</span>
-            </a>
-          }
-        </div>
-      }
-    }
-
-    @if (!tools.length) {
-      <p class="empty">No tools match “{{ query }}”.</p>
+    @for (g of groups; track g.cat.id) {
+      <div class="group">
+        <div class="group-title">{{ g.cat.name }}</div>
+        @for (tool of g.tools; track tool.slug) {
+          <a class="nav-link" [routerLink]="['/tools', tool.slug]" routerLinkActive="active" [title]="tool.name">
+            <svg [appIcon]="tool.icon" [size]="16"></svg>
+            <span class="name">{{ tool.shortName }}</span>
+          </a>
+        }
+      </div>
     }
   </nav>
 
   <div class="sidebar-foot">
-    <p class="mono tip">Your paste never leaves this tab.</p>
-    <button type="button" class="btn btn-ghost btn-sm clear-local" (click)="clearLocal()">
-      Clear local data
-    </button>
+    <div class="trust">
+      <span class="dot-live" aria-hidden="true"></span>
+      <span>Runs locally · works offline</span>
+    </div>
+    <div class="foot-links">
+      <a routerLink="/privacy">Privacy</a>
+      <button type="button" class="link-btn" (click)="clearLocal()">Clear local data</button>
+    </div>
   </div>
 </aside>
 
 @if (open) {
-  <button type="button" class="backdrop" aria-label="Close menu" (click)="onNav()"></button>
+  <button type="button" class="backdrop" aria-label="Close menu" (click)="close.emit()"></button>
 }

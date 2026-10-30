@@ -2,19 +2,20 @@ import { Component, Input, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ToolDefinition } from '../../core/models/tool.model';
 import { ClipboardService } from '../../core/services/clipboard.service';
+import { IconComponent } from '../../shared/components/icon/icon.component';
 import { ToolLayoutComponent } from '../../shared/components/tool-layout/tool-layout.component';
 import { ToolHistoryDirective } from '../../shared/directives/tool-history.directive';
 
 @Component({
   selector: 'app-case-converter',
   standalone: true,
-  imports: [FormsModule, ToolLayoutComponent, ToolHistoryDirective],
+  imports: [FormsModule, ToolLayoutComponent, IconComponent, ToolHistoryDirective],
   template: `
     <app-tool-layout [tool]="tool">
       <div class="panel surface">
         <div class="panel-head">
           <h3 class="panel-title">Input</h3>
-          <button type="button" class="btn btn-danger btn-sm" (click)="input = ''; convert()">Clear</button>
+          <button type="button" class="btn btn-quiet btn-sm" (click)="input = ''; convert()"><svg appIcon="trash"></svg> Clear</button>
         </div>
         <textarea class="textarea" [(ngModel)]="input" [appToolHistory]="tool.slug" rows="6" (ngModelChange)="convert()" placeholder="Type text…"></textarea>
       </div>
@@ -25,7 +26,7 @@ import { ToolHistoryDirective } from '../../shared/directives/tool-history.direc
               <div class="panel-title">{{ row.label }}</div>
               <div class="val mono">{{ row.value || '—' }}</div>
             </div>
-            <button type="button" class="btn btn-ghost btn-sm" (click)="clip.copy(row.value)" [disabled]="!row.value">Copy</button>
+            <button type="button" class="btn btn-ghost btn-sm" (click)="clip.copy(row.value)" [disabled]="!row.value"><svg appIcon="copy"></svg> Copy</button>
           </div>
         }
       </div>

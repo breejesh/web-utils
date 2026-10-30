@@ -1,4 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
+import { ViewportScroller } from '@angular/common';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { AnalyticsService } from './core/services/analytics.service';
@@ -26,16 +27,16 @@ export class AppComponent implements OnInit {
   private readonly theme = inject(ThemeService);
   private readonly analytics = inject(AnalyticsService);
   private readonly router = inject(Router);
+  private readonly scroller = inject(ViewportScroller);
 
   ngOnInit(): void {
     this.theme.init();
     this.analytics.init();
+    // Keep anchor targets clear of the sticky header.
+    this.scroller.setOffset([0, 72]);
 
     this.router.events.pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd)).subscribe((e) => {
-      // Tool pages track themselves with richer titles; home/privacy still get page_view here.
-      if (!e.urlAfterRedirects.startsWith('/tools/')) {
-        this.analytics.pageView(e.urlAfterRedirects);
-      }
+      this.analytics.pageView(e.urlAfterRedirects);
     });
   }
 }
